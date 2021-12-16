@@ -26,7 +26,7 @@
 
 ```az account list-locations --query "[?not_null(metadata.latitude)] .{RegionName:name, PairedRegion:metadata.pairedRegion[0].name}" --output json```
 
-## Gephi
+## Gephi ( In-Progress)
 
 - Connect to Cosmos using Gremlin console - <https://docs.microsoft.com/en-us/azure/cosmos-db/graph/create-graph-console>
 
