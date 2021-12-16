@@ -38,16 +38,17 @@
 - :plugin use tinkerpop.gephi
 - :remote connect tinkerpop.gephi
 - :remote connect tinkerpop.server conf/remote-secure.yaml
-
-```hosts: [ebcbin5oofjcs.gremlin.cosmos.azure.com]
-port: 443
-username: /dbs/database01/colls/graph01
-password: <cosmosdb primary/secondary key>
-connectionPool: {
-  enableSsl: true
-  }
-serializer: { className: org.apache.tinkerpop.gremlin.driver.ser.GraphSONMessageSerializerV2d0, config: { serializeResultToString: true }}
-```
+  - Sample remote-secure.yaml file
+    ```
+    hosts: [ebcbin5oofjcs.gremlin.cosmos.azure.com]
+    port: 443
+    username: /dbs/database01/colls/graph01
+    password: <cosmosdb primary/secondary key>
+    connectionPool: {
+      enableSsl: true
+      }
+    serializer: { className: org.apache.tinkerpop.gremlin.driver.ser.GraphSONMessageSerializerV2d0, config: { serializeResultToString: true }}
+    ```
 
 - :remote console
 - g.V().out()

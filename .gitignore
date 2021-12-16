@@ -140,3 +140,6 @@ cython_debug/
 
 # VS Code cache
 .vscode/
+
+# Dash workspace
+**/dask-worker-space/
