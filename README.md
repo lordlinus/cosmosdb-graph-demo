@@ -17,7 +17,8 @@
 
 ## Query data
 
--
+- [Sample Queries](load_data/sample_queries.md)
+
 
 ## Misc
 
