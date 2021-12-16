@@ -21,7 +21,7 @@
 ###  Traverses from C546116488 to the target vertices and get their ID: C551495160
 `g.V('C546116488').outE().inV().id()`
 
-### List of all accounts that have transferred to "account" and destination account then transferred `out` to another "account. C1151008535 and C1660685562 ( 2 accounts)
+### List of all accounts that have transferred to "account" and destination account then transferred `out` to another "account". C1151008535 and C1660685562 ( 2 accounts)
 `g.V().out().out()`
 
 ```Example:
@@ -42,7 +42,7 @@ C1355319256 CASH_IN C1151008535
 `g.V().in().in()`
 
 
-### Filter accounts that have used "TRANSFER" option to send from destination account: 3 accounts C1894710121, C833807772 and C636706027
+### Accounts that have incoming edges and filter destination accounts that have used "TRANSFER" option to send. 3 accounts C1894710121, C833807772 and C636706027
 `g.V().in().inE().hasLabel('TRANSFER')`
 
 ```[
