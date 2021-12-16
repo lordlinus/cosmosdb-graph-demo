@@ -99,3 +99,15 @@ C1355319256 CASH_IN C1151008535
   }
 ]
 ```
+
+### Reference:
+  - has - specify a tuple of key and value that the entity must-have.
+  - hasLabel - a shortcut to the equivalent - has('label', 'value of the label').
+  - hasNot - specify a tuple of key and value that the entity must not have.
+  - is, not, and, or - Boolean operators to combine conditions.
+  - where - can be used to compare the current position in a traversal when combined with a - - select(), but also used on its own to filter on a condition.
+  - dedup - remove duplicates at the current position in the traversal.
+  - range - return a range of entities, specified as (from, to).
+  - select - allows the graph to be examined from a previous step in a traversal.
+  - simplePath - stops a traversal from reusing a part of the previous path in the traversal.
+  - cyclicPath - allows the reuse of part of the previous path.
