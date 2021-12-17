@@ -14,13 +14,13 @@
   - `set COSMOS_KEY=<cosmosdb primary/secondary key>`
   - `set COSMOS_ENDPOINT=<cosmosdb endpoint>`
 - run "`pip install -r requirements.txt`"
-- run notebook "`insert_transact_data_python.ipynb`"
+- run notebook ["`insert_transact_data_python.ipynb`"](load_data/insert_transact_data_python.ipynb)
 
 ### PySpark
 - Create Synapse spark medium pool
 - Upload csv file into Synapse linked storagae account
 - create linked service to mount the storage account e.g. `linked-synapse-01-WorkspaceDefaultStorage`
-- Import notebook `insert_transact_data_spark.ipynb`
+- Import notebook ["`insert_transact_data_spark.ipynb`"](load_data/insert_transact_data_spark.ipynb)
 - Update `linkedService` , `cosmosEndpoint`, `cosmosMasterKey`, `cosmosDatabaseName` and `cosmosContainerName` in notebook
 - run notebook
   
