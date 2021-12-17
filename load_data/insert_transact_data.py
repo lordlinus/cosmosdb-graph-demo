@@ -44,12 +44,12 @@ def print_status_attributes(result):
 
 def exec_graphql(query):
     print(query)
-    callback = cql.submitAsync(query)
-    if callback.result() is not None:
-        print(f"\tInserted this vertex:\n\t{callback.result().all().result()}")
-    else:
-        print(f"Something went wrong with this query: {query}\n")
-    print_status_attributes(callback.result())
+    # callback = cql.submitAsync(query)
+    # if callback.result() is not None:
+    #     print(f"\tInserted this vertex:\n\t{callback.result().all().result()}")
+    # else:
+    #     print(f"Something went wrong with this query: {query}\n")
+    # print_status_attributes(callback.result())
 
 
 def drop_graph():
@@ -100,6 +100,7 @@ def add_account_vertex(account: str):
 
 
 def add_transact_edge(edge_batch: pd.DataFrame):
+    # print(edge_batch)
     _tmp = []
     for index, row in edge_batch.iterrows():
         query = (
@@ -115,8 +116,8 @@ def add_transact_edge(edge_batch: pd.DataFrame):
         )
         _tmp.append(query)
     _q = f"g.{'.'.join(_tmp)}"
-    # print(_q)
-    exec_graphql(query=_q)
+    print(_q)
+    # exec_graphql(query=_q)
 
 
 if __name__ == "__main__":
@@ -133,8 +134,51 @@ if __name__ == "__main__":
     )
     # for batch in np.array_split(vertices, 200):
     #     add_account_vertex_batch(batch.values.tolist())
+    #     break
 
     for batch in np.array_split(edges, 1000):
         add_transact_edge(batch)
+        break
 
     print("Data load complete.")
+
+
+#  manual - g.addV('account').property('id','C1480254471').property('accountId','C1480254471')
+#  manual - g.addV('account').property('id','C39713115').property('accountId','C39713115')  
+#  edge - g.V('C1480254471').addE('CASH_OUT').from(g.V('C1480254471')).to(g.V('C39713115')).property('type','CASH_OUT').property('amount',175207).property('oldbalanceOrg',9003).property('newbalanceOrig',0).property('oldbalanceDest',244076).property('newbalanceDest',0)
+
+# g.V('C1376626882').addE('CASH_OUT').from(g.V('C1376626882')).to(g.V('C286977404'))
+#    {
+#         "label": "CASH_IN",
+#         "id": "fecd1f25-ab5e-4508-903d-22720dcf8ad2",
+#         "_sink": "C1376626882",
+#         "_sinkLabel": "account",
+#         "_vertexId": "C69495305",
+#         "_vertexLabel": "account",
+#         "_isEdge": "true",
+#         "_rid": "LRgaAOGApHkNAAAAAAAAAA==",
+#         "_self": "dbs/LRgaAA==/colls/LRgaAOGApHk=/docs/LRgaAOGApHkNAAAAAAAAAA==/",
+#         "_etag": "\"0600e7b2-0000-0c00-0000-61bc15af0000\"",
+#         "_attachments": "attachments/",
+#         "_ts": 1639716271
+#     }
+
+#  {
+#         "label": "CASH_OUT",
+#         "id": "bf74378e-af82-4089-b76d-232d4a72f94c",
+#         "_sink": "C286977404",
+#         "_sinkLabel": "account",
+#         "_sinkPartition": "C286977404",
+#         "_vertexId": "C1376626882",
+#         "_vertexLabel": "account",
+#         "_isEdge": true,
+#         "accountId": "C1376626882",
+#         "_rid": "LRgaAOGApHkOAAAAAAAAAA==",
+#         "_self": "dbs/LRgaAA==/colls/LRgaAOGApHk=/docs/LRgaAOGApHkOAAAAAAAAAA==/",
+#         "_etag": "\"06005ab3-0000-0c00-0000-61bc16f30000\"",
+#         "_attachments": "attachments/",
+#         "_ts": 1639716595
+#     }
+
+# g.addV('account').property('id','C1542157370').property('accountId','C1542157370')
+# g.addV('account').property('id','C1634109320').property('accountId','C1634109320')
