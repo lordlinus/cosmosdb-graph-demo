@@ -1,140 +1,115 @@
 # Sample Graph Queries
 
+## Simple Queries
+
 ### Retrieve all verices with account
-`g.V().hasLabel('account')`
+
+> `g.V().hasLabel('account')`
 
 ### Retrieve edges that label CASH_IN
-`g.E().hasLabel('CASH_IN') `
+
+> `g.E().hasLabel('CASH_IN') `
 
 ### Get a vertex by id
-`g.V().hasId('C551495160') or g.V('C551495160')`
 
-### Retrieves incoming CASH_IN for account C551495160 count: 18
-`g.V('C551495160').inE().hasLabel('CASH_IN')`
+> `g.V().hasId('C551495160') or g.V('C551495160')`
 
-###  Retrieves the source vertices/accounts of the incoming edges of account C551495160 Count: 70
-`g.V('C551495160').inE().outv()`
+### Retrieves incoming CASH_IN for account C551495160
 
-### Retrieves both incoming and outgoing edges for account C551495160 Count: 70
-`g.V('C551495160').bothE()`
+> `g.V('C551495160').inE().hasLabel('CASH_IN')`
 
-###  Traverses from C546116488 to the target vertices and get their ID: C551495160
-`g.V('C546116488').outE().inV().id()`
+- count: 18
 
-### Graph Traversal 1: 
-```g.V(). 
+### Retrieves both incoming and outgoing edges for account C551495160
+
+> `g.V('C551495160').bothE()`
+
+- count: 70
+
+---
+
+## Complex Queries
+
+### Retrieves the source vertices/accounts of the incoming edges of account C551495160
+
+> `g.V('C551495160').inE().outv()`
+
+- count: 70
+
+### Traverses from C546116488 to the target vertices and get their ID: C551495160
+
+> `g.V('C546116488').outE().inV().id()`
+
+**_Graph Traversal 1_**:
+
+Accounts that received 'CASH_OUT' from C151078233 and did 'CASH_IN' to another account.
+
+i.e. C151078233 did 'CASH_OUT' to C1355319256 and C1355319256 did a 'CASH_IN' to C1151008535
+
+```
+g.V().
     has('accountId','C151078233'). #select vertices with accountId C151078233
     outE('CASH_OUT'). #select outgoing edges with label CASH_OUT
     inV(). #select incoming vertices
     outE('CASH_IN'). #select outgoing edges with label CASH_IN
     inV() #select incoming vertices
 ```
-or 
+
+or
 
 `g.V('C151078233').out('CASH_OUT').out('CASH_IN')`
 
+- Result _C1151008535_
 
-### Graph Traversal 2:
+**_Graph Traversal 2:_**
 
-```g.V(). 
+List of account that have 'DEBIT' into account that received 'TRANSFER' from account C89143842.
+
+i.e. C89143842 did 'TRANSFER' to C1530856786, C1530856786 received 'DEBIT' from C371876102
+
+```
+g.V().
     has('accountId','C89143842'). #select vertices with accountId C89143842
     outE('TRANSFER'). #select outgoing edges with label TRANSFER
     inV(). #select incoming vertices
     inE('DEBIT'). # select incoming edges with label DEBIT
     outV() #select outgoing vertices
 ```
-or 
+
+or
 
 `g.V('C89143842').out('TRANSFER').in('DEBIT')`
 
-## Search the whole graph with outgoung as CASH_OUT and incoming as CASH_IN
-g.V().out('CASH_OUT').out('CASH_IN')
+- Result: _C371876102_
 
+**_Graph Traversal 3:_**
 
-```Example:
-C1355319256 CASH_IN C1151008535
-9 accounts( 1 transfer, 4 cash_in and 4 cash_out) are send to C1355319256
-    C1894710121	TRANSFER
-    C1849606250	CASH_IN
-    C1763263808	CASH_IN
-    C46742020	CASH_IN
-    C477356311	CASH_IN
-    C1574702575	CASH_OUT
-    C151078233	CASH_OUT
-    C444768769	CASH_OUT
-    C1955399252	CASH_OUT
+From list of accounts that did CASH_OUT to 'C239700190' , Identify other accounts that also received CASH_OUT from the same source account(s)
+
+i.e. C239700190 received from 10 accounts, out of these 10 accounts 1 account (C325952657) sent to C1521704415
+
+```
+g.V('C239700190'). # select vertex with accountId C239700190
+    inE('CASH_OUT'). # select incoming edges with label CASH_OUT
+    outV(). # select outgoing vertices
+    outE('CASH_OUT'). # select outgoing edges with label CASH_OUT
+    inV() #select incoming vertices
 ```
 
-### Info:
-`-- in => source`
-`-- out => target`
-`out() => outE().inV()`
-`in() => inE().outV()`
+or
 
-### List of all accounts that have transferred to "account" and destination account also received `in` from another "account" - count: 21
-`g.V().in().in()`
+`g.V('C239700190').in('CASH_OUT').out('CASH_OUT')`
 
+- Result: _C239700190_ and _C1521704415_
 
-### Accounts that have incoming edges and filter destination accounts that have used "TRANSFER" option to send. 3 accounts C1894710121, C833807772 and C636706027
-`g.V().in().inE().hasLabel('TRANSFER')`
+---
 
-```[
-  {
-    "id": "8ab6f302-9178-422e-b092-91e4413e2df0",
-    "label": "TRANSFER",
-    "type": "edge",
-    "inVLabel": "account",
-    "outVLabel": "account",
-    "inV": "C1355319256",
-    "outV": "C1894710121",
-    "properties": {
-      "type": "TRANSFER",
-      "amount": 262651,
-      "oldbalanceOrg": 10743,
-      "newbalanceOrig": 0,
-      "oldbalanceDest": 53130,
-      "newbalanceDest": 315782
-    }
-  },
-  {
-    "id": "9630eaf2-719e-4edb-b2e4-f3c042f6d475",
-    "label": "TRANSFER",
-    "type": "edge",
-    "inVLabel": "account",
-    "outVLabel": "account",
-    "inV": "C1134131776",
-    "outV": "C833807772",
-    "properties": {
-      "type": "TRANSFER",
-      "amount": 1112939,
-      "oldbalanceOrg": 36303,
-      "newbalanceOrig": 0,
-      "oldbalanceDest": 661255,
-      "newbalanceDest": 1774195
-    }
-  },
-  {
-    "id": "dcebc52b-ec3d-4384-a486-76f8402973de",
-    "label": "TRANSFER",
-    "type": "edge",
-    "inVLabel": "account",
-    "outVLabel": "account",
-    "inV": "C1134131776",
-    "outV": "C636706027",
-    "properties": {
-      "type": "TRANSFER",
-      "amount": 789285,
-      "oldbalanceOrg": 0,
-      "newbalanceOrig": 0,
-      "oldbalanceDest": 1590128,
-      "newbalanceDest": 2379413
-    }
-  }
-]
-```
+## Reference
 
-### Reference
-
+- `-- in => source`
+- `-- out => target`
+- `out() => outE().inV()`
+- `in() => inE().outV()`
 - has - specify a tuple of key and value that the entity must-have.
 - hasLabel - a shortcut to the equivalent - has('label', 'value of the label').
 - hasNot - specify a tuple of key and value that the entity must not have.
