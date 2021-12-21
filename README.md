@@ -9,6 +9,8 @@
 
 ## Load data
 
+Data source: [Kaggle Fraud Transaction Detection](https://www.kaggle.com/llabhishekll/fraud-transaction-detection/data)
+
 ### Python
 
 - update environment variables with correct values

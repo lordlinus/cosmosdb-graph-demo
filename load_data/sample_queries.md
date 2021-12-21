@@ -59,7 +59,7 @@ or
 
 `g.V('C151078233').out('CASH_OUT').out('CASH_IN')`
 
-- Result _C1151008535_
+- Result _C1151008535_ is the target vertex. [Image](images/graph_traversal_1.jpg)
 
 **_Graph Traversal 2:_**
 
