@@ -70,20 +70,20 @@ gremlin> :plugin use tinkerpop.gephi
 
 ### create graph
 
-gremlin> graph = TinkerFactory.createModern()
+- gremlin> graph = TinkerFactory.createModern()
 ==>tinkergraph[vertices:6 edges:6]
 
 ### connect to tinkerpop.gephi
 
-gremlin> :remote connect tinkerpop.gephi
+- gremlin> :remote connect tinkerpop.gephi
 ==>Connection to Gephi - <http://localhost:8080/workspace1> with stepDelay:1000, startRGBColor:[0.0, 1.0, 0.5], colorToFade:g, colorFadeRate:0.7, startSize:10.0,sizeDecrementRate:0.33
 
-### config to remote gephi (Optinal)
+### config to remote gephi (Optional)
 
-gremlin> :remote config port 8080
-gremlin>  :remote config host 192.25.11.38
-gremlin> :remote config workspace workspace1
+- gremlin> :remote config port 8080
+- gremlin>  :remote config host 192.25.11.38
+- gremlin> :remote config workspace workspace1
 
 ### send data to gephi
 
-gremlin> :> graph
+- gremlin> :> graph
