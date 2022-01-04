@@ -47,3 +47,11 @@ module cosmos 'modules/cosmos.bicep' = {
     partitionKey: partitionKey
   }
 }
+
+module search 'modules/search.bicep' = {
+  scope: demoResourceGroup
+  name: 'search'
+  params: {
+    location: location
+  }
+}

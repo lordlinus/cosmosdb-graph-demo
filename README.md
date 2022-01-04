@@ -40,20 +40,55 @@ Graph helps solve **complex** problems by utilizing power of **relationships** b
 
 - CosmosDB visulaization solutions are available in [Graph Visualization Partners](https://docs.microsoft.com/en-us/azure/cosmos-db/graph/graph-visualization-partners)
 - Sample dashboard app based on [streamlit](https://github.com/streamlit/streamlit) is available [here](visualize/dashboard.py)
+
   - To run the app
+
     - Install dependencies from [requirements.txt](./requirements.txt)
+    - create `.env` files with
+
+      - `COSMOS_DATABASE`, `COSMOS_GRAPH_COLLECTION`, `COSMOS_KEY` and `COSMOS_ENDPOINT` from Cosmos DB account
+      - `SEARCH_KEY`, `SEARCH_INDEX` and `SEARCH_ENDPOINT` from Search service
+      <details>
+      <summary>.env file example (replace with values from your services)</summary>
+
+      ```bash
+      COSMOS_DATABASE=database01
+      COSMOS_GRAPH_COLLECTION=graph01
+      COSMOS_KEY=xxxxx
+      COSMOS_ENDPOINT=xxxxx.gremlin.cosmos.azure.com:443/
+      SEARCH_KEY=xxxx
+      SEARCH_INDEX=cosmosdb-index
+      SEARCH_ENDPOINT=https://xxxxx.search.windows.net
+      ```
+
+      </details>
+
     - run `streamlit run visualize/dashboard.py`
     - screenshot of [dashboard](images/dashboard.png)
 
-
-## Azure Search (Optional used for dashboard and enable search)
+## Azure Search (Optional used for dashboard and enable search queries)
 
 <details>
-<summary>Create Datasource</summary>
+<summary>Create CosmosDb Datasource</summary>
+
+Endpoint: `{{baseUrl}}/datasources?api-version={{apiVersion}}`
 
 ```json
-  TODO
+{
+  "name": "transactions",
+  "description": "Cosmos DB for transactions",
+  "type": "cosmosdb",
+  "subtype": "Gremlin",
+  "credentials": {
+    "connectionString": "AccountEndpoint=..........ApiKind=Gremlin;"
+  },
+  "container": {
+    "name": "graph01",
+    "query": "g.E()"
+  }
+}
 ```
+
 </details>
 
 <details>
@@ -246,13 +281,6 @@ Endpoint: `{{baseUrl}}/indexers?api-version={{apiVersion}}`
 ```
 
 </details>
-
-
-## Misc
-
-### list paired region in AZ
-
-`az account list-locations --query "[?not_null(metadata.latitude)] .{RegionName:name, PairedRegion:metadata.pairedRegion[0].name}" --output json`
 
 ## References
 

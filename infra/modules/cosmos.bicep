@@ -42,7 +42,7 @@ param graphName string = 'graph01'
 @description('Maximum autoscale throughput for the graph')
 @minValue(4000)
 @maxValue(1000000)
-param autoscaleMaxThroughput int = 5000
+param autoscaleMaxThroughput int = 20000
 
 @description('Maximum throughput for the graph')
 @minValue(400)
@@ -138,10 +138,10 @@ resource accountName_databaseName_graphName 'Microsoft.DocumentDB/databaseAccoun
       }
     }
     options: {
-      throughput: maxThroughput
-      // autoscaleSettings: {
-      //   maxThroughput: autoscaleMaxThroughput
-      // }
+      // throughput: maxThroughput
+      autoscaleSettings: {
+        maxThroughput: autoscaleMaxThroughput
+      }
     }
   }
 }
