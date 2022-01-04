@@ -1,4 +1,0 @@
-networkx[all]
-gremlinpython
-pandas
-nest_asyncio

@@ -1,0 +1,10 @@
+networkx[all]
+gremlinpython
+pandas
+nest_asyncio
+azure-search-documents
+streamlit
+streamlit-agraph
+azure-cosmos
+pygraphviz
+python-dotenv

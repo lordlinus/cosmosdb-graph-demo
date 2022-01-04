@@ -143,3 +143,6 @@ cython_debug/
 
 # Dash workspace
 **/dask-worker-space/
+
+# .env files
+.env

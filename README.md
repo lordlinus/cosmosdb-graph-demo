@@ -21,7 +21,7 @@ Data source: [Kaggle Fraud Transaction Detection](https://www.kaggle.com/llabhis
 
 ### PySpark
 
-- Create Synapse spark medium pool in Synpase. [Link](https://docs.microsoft.com/en-us/azure/synapse-analytics/quickstart-create-apache-spark-pool-portal) 
+- Create Synapse spark medium pool in Synpase. [Link](https://docs.microsoft.com/en-us/azure/synapse-analytics/quickstart-create-apache-spark-pool-portal)
 - Upload csv file into Synapse linked storagae account
 - create linked service to mount the storage account e.g. `linked-storage-service`
 - Import notebook ["`insert_transact_data_spark.ipynb`"](load_data/insert_transact_data_spark.ipynb)
@@ -30,20 +30,242 @@ Data source: [Kaggle Fraud Transaction Detection](https://www.kaggle.com/llabhis
 
 ## Query data
 
-- [Sample Queries](load_data/sample_queries.md)
+### Why Graph and not SQL?
+
+Graph helps solve **complex** problems by utilizing power of **relationships** between objects, eventhough some of these can be modeled as SQL statements gremlin api provide a more concise way to express and search relationships
+
+- [Sample Queries](sample_queries.md)
 
 ## Visualization
 
-- TODO
+- CosmosDB visulaization solutions are available in [Graph Visualization Partners](https://docs.microsoft.com/en-us/azure/cosmos-db/graph/graph-visualization-partners)
+- Sample dashboard app based on [streamlit](https://github.com/streamlit/streamlit) is available [here](visualize/dashboard.py)
+  - To run the app
+    - Install dependencies from [requirements.txt](./requirements.txt)
+    - run `streamlit run visualize/dashboard.py`
+    - screenshot of [dashboard](images/dashboard.png)
 
-###
 
-## References
+## Azure Search (Optional used for dashboard and enable search)
 
-- <https://tinkerpop.apache.org/docs/current/tutorials/getting-started/>
+<details>
+<summary>Create Datasource</summary>
+
+```json
+  TODO
+```
+</details>
+
+<details>
+<summary>Create Index</summary>
+
+Endpoint: `{{baseUrl}}/indexes?api-version={{apiVersion}}`
+
+```json
+{
+  "name": "cosmosdb-index",
+  "fields": [
+    {
+      "name": "type",
+      "type": "Edm.String",
+      "facetable": false,
+      "filterable": true,
+      "key": false,
+      "retrievable": true,
+      "searchable": true,
+      "sortable": false,
+      "analyzer": "standard.lucene",
+      "indexAnalyzer": null,
+      "searchAnalyzer": null,
+      "synonymMaps": [],
+      "fields": []
+    },
+    {
+      "name": "sink",
+      "type": "Edm.String",
+      "key": false,
+      "facetable": false,
+      "filterable": true,
+      "retrievable": true,
+      "searchable": true,
+      "sortable": false,
+      "analyzer": "standard.lucene",
+      "synonymMaps": [],
+      "fields": []
+    },
+    {
+      "name": "sinkLabel",
+      "type": "Edm.String",
+      "key": false,
+      "facetable": false,
+      "filterable": false,
+      "retrievable": true,
+      "searchable": false,
+      "sortable": false,
+      "analyzer": null,
+      "synonymMaps": [],
+      "fields": []
+    },
+    {
+      "name": "vertexId",
+      "type": "Edm.String",
+      "key": false,
+      "facetable": false,
+      "filterable": true,
+      "retrievable": true,
+      "searchable": true,
+      "sortable": false,
+      "analyzer": "standard.lucene",
+      "synonymMaps": [],
+      "fields": []
+    },
+    {
+      "name": "vertexLabel",
+      "type": "Edm.String",
+      "key": false,
+      "facetable": false,
+      "filterable": false,
+      "retrievable": true,
+      "searchable": false,
+      "sortable": false,
+      "analyzer": null,
+      "synonymMaps": [],
+      "fields": []
+    },
+    {
+      "name": "amount",
+      "type": "Edm.Double",
+      "facetable": false,
+      "filterable": true,
+      "retrievable": true,
+      "sortable": true,
+      "analyzer": null,
+      "indexAnalyzer": null,
+      "searchAnalyzer": null,
+      "synonymMaps": [],
+      "fields": []
+    },
+    {
+      "name": "oldbalanceOrg",
+      "type": "Edm.Double",
+      "facetable": false,
+      "filterable": true,
+      "retrievable": true,
+      "sortable": true,
+      "analyzer": null,
+      "indexAnalyzer": null,
+      "searchAnalyzer": null,
+      "synonymMaps": [],
+      "fields": []
+    },
+    {
+      "name": "oldbalanceDest",
+      "type": "Edm.Double",
+      "facetable": false,
+      "filterable": true,
+      "retrievable": true,
+      "sortable": true,
+      "analyzer": null,
+      "indexAnalyzer": null,
+      "searchAnalyzer": null,
+      "synonymMaps": [],
+      "fields": []
+    },
+    {
+      "name": "newbalanceDest",
+      "type": "Edm.Double",
+      "facetable": false,
+      "filterable": true,
+      "retrievable": true,
+      "sortable": true,
+      "analyzer": null,
+      "indexAnalyzer": null,
+      "searchAnalyzer": null,
+      "synonymMaps": [],
+      "fields": []
+    },
+    {
+      "name": "rid",
+      "type": "Edm.String",
+      "facetable": false,
+      "filterable": false,
+      "key": true,
+      "retrievable": true,
+      "searchable": false,
+      "sortable": false,
+      "analyzer": null,
+      "indexAnalyzer": null,
+      "searchAnalyzer": null,
+      "synonymMaps": [],
+      "fields": []
+    }
+  ]
+}
+```
+
+</details>
+
+<details>
+<summary>Create Indexer with field mapping</summary>
+
+Endpoint: `{{baseUrl}}/indexers?api-version={{apiVersion}}`
+
+```json
+{
+  "name": "cosmosdb-indexer",
+  "description": "",
+  "dataSourceName": "transactions",
+  "targetIndexName": "cosmosdb-index",
+  "schedule": null,
+  "parameters": {
+    "maxFailedItems": 0,
+    "maxFailedItemsPerBatch": 0,
+    "base64EncodeKeys": false,
+    "configuration": {}
+  },
+  "fieldMappings": [
+    {
+      "sourceFieldName": "_sink",
+      "targetFieldName": "sink"
+    },
+    {
+      "sourceFieldName": "_sinkLabel",
+      "targetFieldName": "sinkLabel"
+    },
+    {
+      "sourceFieldName": "_vertexId",
+      "targetFieldName": "vertexId"
+    },
+    {
+      "sourceFieldName": "_vertexLabel",
+      "targetFieldName": "vertexLabel"
+    }
+  ],
+  "outputFieldMappings": []
+}
+```
+
+</details>
+
 
 ## Misc
 
 ### list paired region in AZ
 
 `az account list-locations --query "[?not_null(metadata.latitude)] .{RegionName:name, PairedRegion:metadata.pairedRegion[0].name}" --output json`
+
+## References
+
+- <https://tinkerpop.apache.org/docs/current/tutorials/getting-started/>
+- <https://tinkerpop.apache.org/docs/current/reference/#a-note-on-lambdas>
+- <https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/cosmos-db/graph/gremlin-limits.md>
+
+## License
+
+MIT
+
+---
+
+> GitHub [@lordlinus](https://github.com/lordlinus) &nbsp;&middot;&nbsp;
+> Twitter [@lordlinus](https://twitter.com/lordlinus) &nbsp;&middot;&nbsp;
+> Linkedin [Sunil Sattiraju](https://www.linkedin.com/in/sunilsattiraju/)
