@@ -30,6 +30,12 @@ param maxThroughput int
 
 param partitionKey string
 
+@description('Ip address of the client accessing Synapse resource')
+param clientIp string
+
+@description('SQL Admin password')
+param sqlAdminPassword string
+
 var name = toLower('${prefix}-${environment}')
 
 resource demoResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -53,5 +59,15 @@ module search 'modules/search.bicep' = {
   name: 'search'
   params: {
     location: location
+  }
+}
+
+module spark 'modules/synapse.bicep' = {
+  scope: demoResourceGroup
+  name: 'synapse'
+  params: {
+    location: location
+    clientIp: clientIp
+    sqlAdminPassword: sqlAdminPassword
   }
 }

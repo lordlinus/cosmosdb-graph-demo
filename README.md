@@ -1,11 +1,17 @@
 # Cosmos Graph Demo
 
-## Create cosmosdb database and collection
+## Deploy infrastructre
 
-- update `param.dev.json` file
+- update `param.dev.json` file based on your requirements
+  - change `clientIp` to your workstation ip ( Default value `0.0.0.0`)
+  - change `sqlAdminPassword` to a strong password ( Default value `**ChangeMeNow1234!**`)
 - run below command to create cosmosdb database and collection
-  - `console az login`
+  - `az login`
   - `az deployment sub create --location southeastasia --template-file infra/main.bicep --parameters infra/params.dev.json`
+- Below services will be deployed
+  - Azure Cosmos DB
+  - Azure Search
+  - Synapse Workspace with default storage account and Spark medium pool
 
 ## Load data
 
@@ -35,6 +41,10 @@ Data source: [Kaggle Fraud Transaction Detection](https://www.kaggle.com/llabhis
 Graph helps solve **complex** problems by utilizing power of **relationships** between objects, eventhough some of these can be modeled as SQL statements gremlin api provide a more concise way to express and search relationships
 
 - [Sample Queries](sample_queries.md)
+
+### Why use Azure search
+
+Cosmos is great for running OLTP queries and if you need to search for data within edges/transactions, Azure search is a great option.
 
 ## Visualization
 

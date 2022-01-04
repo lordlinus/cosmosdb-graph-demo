@@ -1,27 +1,33 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "location": {
-            "value": "southeastasia"
-        },
-        "environment": {
-            "value": "dev"
-        },
-        "prefix": {
-            "value": "ssatt"
-        },
-        "primaryRegion": {
-            "value": "northeurope"
-        },
-        "secondaryRegion": {
-            "value": "westeurope"
-        },
-        "maxThroughput": {
-            "value": 4000
-        },
-        "partitionKey" : {
-            "value": "airportcode"
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "southeastasia"
+    },
+    "environment": {
+      "value": "dev"
+    },
+    "prefix": {
+      "value": "ssatt"
+    },
+    "primaryRegion": {
+      "value": "northeurope"
+    },
+    "secondaryRegion": {
+      "value": "westeurope"
+    },
+    "maxThroughput": {
+      "value": 20000
+    },
+    "partitionKey": {
+      "value": "accountId"
+    },
+    "clientIp": {
+      "value": "0.0.0.0"
+    },
+    "sqlAdminPassword": {
+      "value": "**ChangeMeNow1234!**"
     }
+  }
 }
