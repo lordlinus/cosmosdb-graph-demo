@@ -17,14 +17,6 @@
 
 Data source: [Kaggle Fraud Transaction Detection](https://www.kaggle.com/llabhishekll/fraud-transaction-detection/data)
 
-### Python
-
-- update environment variables with correct values
-  - `set COSMOS_KEY=<cosmosdb primary/secondary key>`
-  - `set COSMOS_ENDPOINT=<cosmosdb endpoint>`
-- run "`pip install -r requirements.txt`"
-- run notebook ["`insert_transact_data_python.ipynb`"](load_data/insert_transact_data_python.ipynb)
-
 ### PySpark
 
 - Create Synapse spark medium pool in Synpase. [Link](https://docs.microsoft.com/en-us/azure/synapse-analytics/quickstart-create-apache-spark-pool-portal)
