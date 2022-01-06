@@ -18,9 +18,6 @@ search_key = os.getenv("SEARCH_KEY")
 search_index = os.getenv("SEARCH_INDEX")
 search_endpoint = os.getenv("SEARCH_ENDPOINT")
 
-st.session_state.NUM_ACCOUNTS = 0
-st.session_state.NUM_TRANSACTIONS = 0
-
 credential = AzureKeyCredential(search_key)
 
 search_client = SearchClient(
@@ -35,13 +32,13 @@ cql = client.Client(
     message_serializer=serializer.GraphSONSerializersV2d0(),
 )
 
-#
-def create_graph(cosmos_result):
+# Create a graph from the results of a Gremlin query, ir expects the query to return with e and v properties
+def create_graph(cosmos_result: list) -> None:
     # graphviz layout options: neato, dot, twopi, circo, fdp, nop, wc, acyclic, gvpr, gvcolor, ccomps, sccmap, tred, sfdp, unflatten
     # See http://www.graphviz.org/doc/info/attrs.html for a list of attributes.
     config = Config(
-        width=1024,
-        height=800,
+        width=1600,
+        height=1200,
         directed=True,
         nodeHighlightBehavior=True,
         collapsible=False,
@@ -68,53 +65,68 @@ def create_graph(cosmos_result):
                 label=f"${int(r['e']['properties']['amount']):,}-{r['e']['properties']['type']}",
             )
         )
-    st.session_state.NUM_ACCOUNTS = len(nodes)
-    st.session_state.NUM_TRANSACTIONS = len(edges)
     agraph(nodes=nodes, edges=edges, config=config)
 
-
-def print_status_attributes(result):
-    print(f"\tResponse status_attributes:\n\t{result.status_attributes}")
-
-
-def exec_graphql(query):
-    # print(query)
+# Get adjacent vertices ( 2 levels ) and create a graph
+def get_adj_vertices_and_graph(vertices_list: list) -> None:
+    query = f"g.V().has('accountId',within({vertices_list})).optional(both().both()).bothE().as('e').inV().as('v').select('e', 'v')"
     callback = cql.submitAsync(query)
     if callback.result() is not None:
         r = callback.result().all().result()
-        # print(f"\tGot results:\n\t{r}")
         create_graph(r)
-
     else:
         print(f"Something went wrong with this query: {query}\n")
-    # print_status_attributes(callback.result())
 
+# Execute gremlin query
+def execute_gremlin_query(query: str) -> None:
+    print(f"Executing query: {query}")
+    callback = cql.submitAsync(query)
+    accountId_list = []
+    if callback.result() is not None:
+        results = callback.result().all().result()
+        print(f"\tGot results:\n\t{results}")
+        for r in results:
+            accountId_list.append(r["id"])
+        get_adj_vertices_and_graph(accountId_list)
+    else:
+        print(f"Something went wrong with this query: {query}\n")
 
-def search_create_graph(query=None, filter=None, accountId_list=[]):
-    results = search_client.search(
-        search_text=query, include_total_count=True, filter=filter
+# Execute Azure search to find accounts either in 
+def execute_search(search_text: str, filter=None) -> None:
+    accountId_list = []
+    response = search_client.search(
+        search_text=search_text, include_total_count=True, filter=filter
     )
-    for r in results:
-        # print(r)
-        accountId_list.append(r["sink"])
+    for r in response:
         accountId_list.append(r["vertexId"])
-    query = f"g.V().has('accountId',within({accountId_list})).optional(both().both()).bothE().as('e').inV().as('v').select('e', 'v')"
-    exec_graphql(query)
+        accountId_list.append(r["sink"])
+    get_adj_vertices_and_graph(accountId_list)
 
 
-st.set_page_config(page_title="Sample Graph Dashboard", page_icon="🌍", layout="wide")
+st.set_page_config(layout="wide")
+col1, col2 = st.columns(2)
+container = st.container()
+with col1:
+    st.title("Gremlin Query")
+    with st.form(key="search_form"):
+        query_input = st.text_input(
+            label="Enter a Gremlin query in the text box below.",
+            help="e.g. g.V().limit(10)",
+        )
+        submit_button_t = st.form_submit_button(label="Submit")
 
+with col2:
+    st.title("Search Query")
+    with st.form(key="gremlin-query"):
+        text_input = st.text_input(
+            label="Account Number either sent or received",
+            help="e.g. C1151008535",
+            autocomplete="True",
+        )
+        submit_button_q = st.form_submit_button(label="Submit")
 
-# Create search input box
-with st.form(key="search_form"):
-    text_input = st.text_input(
-        label="Account Number either sent or received",
-        help="e.g. C1151008535",
-        autocomplete="True",
-    )
-    submit_button = st.form_submit_button(label="Submit")
-
-# Create graph
-with st.empty():
-    if submit_button:
-        search_create_graph(text_input)
+with st.container():
+    if submit_button_t:
+        execute_gremlin_query(query_input)
+    elif submit_button_q:
+        execute_search(text_input)
