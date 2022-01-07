@@ -1,6 +1,6 @@
-python-dotenv
-streamlit
-streamlit-agraph
-azure-search-documents
-gremlinpython
-pygraphviz
+azure-search-documents==11.2.0
+gremlinpython==3.5.1
+python-dotenv==0.19.2
+streamlit==1.3.1
+streamlit-agraph==0.0.37
+pygraphviz==1.7
