@@ -1,10 +1,6 @@
-networkx[all]
-gremlinpython
-pandas
-nest_asyncio
-azure-search-documents
+python-dotenv
 streamlit
 streamlit-agraph
-azure-cosmos
+azure-search-documents
+gremlinpython
 pygraphviz
-python-dotenv
