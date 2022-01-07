@@ -1,4 +1,5 @@
 import os
+import math
 
 import streamlit as st
 from azure.core.credentials import AzureKeyCredential
@@ -38,8 +39,7 @@ cql = client.Client(
 # Initialize streamlit  dashboard
 st.set_page_config(layout="wide")
 col1, col2 = st.columns(2)
-container = st.container()
-
+# container = st.container()
 # Create a graph from the results of a Gremlin query, ir expects the query to return with e and v properties
 def create_graph(cosmos_result: list) -> None:
     # graphviz layout options: neato, dot, twopi, circo, fdp, nop, wc, acyclic, gvpr, gvcolor, ccomps, sccmap, tred, sfdp, unflatten
@@ -77,6 +77,10 @@ def create_graph(cosmos_result: list) -> None:
     st.metric("Number of Transactions: ", len(edges))
     agraph(nodes=nodes, edges=edges, config=config)
 
+def print_status_attributes(result,q):
+    result.status_attributes['query']=q
+    with st.expander(f"Cosmos RU charge: {math.ceil(result.status_attributes['x-ms-total-request-charge'])}, Click to see more"):
+        st.json(result.status_attributes)
 
 # Get adjacent vertices ( 2 levels ) and create a graph
 def get_adj_vertices_and_graph(vertices_list: list) -> None:
@@ -85,9 +89,12 @@ def get_adj_vertices_and_graph(vertices_list: list) -> None:
         callback = cql.submitAsync(query)
         if callback.result() is not None:
             r = callback.result().all().result()
+            with st.expander("Click to see Cosmos json response"):
+                st.json(r)
             create_graph(r)
         else:
             st.write(f"Something went wrong with this query:", query)
+        print_status_attributes(callback.result(),query)
     except Exception as e:
         st.write(f"Something went wrong with this query:", query)
         st.error(e)
@@ -107,6 +114,7 @@ def execute_gremlin_query(query: str) -> None:
             get_adj_vertices_and_graph(accountId_list)
         else:
             st.write(f"Something went wrong with this query:", query)
+        print_status_attributes(callback.result(),query)
     except Exception as e:
         st.write(f"Something went wrong with this query:", query)
         st.error(e)
