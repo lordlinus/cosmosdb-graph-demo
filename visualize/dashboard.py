@@ -18,6 +18,9 @@ search_key = os.getenv("SEARCH_KEY")
 search_index = os.getenv("SEARCH_INDEX")
 search_endpoint = os.getenv("SEARCH_ENDPOINT")
 
+# Limit the max number of results returned by a raw gremlin query to avoid excess RU's and timeouts
+GREMLIN_QUERY_LIMIT = 100
+
 credential = AzureKeyCredential(search_key)
 
 search_client = SearchClient(
@@ -32,13 +35,18 @@ cql = client.Client(
     message_serializer=serializer.GraphSONSerializersV2d0(),
 )
 
+# Initialize streamlit  dashboard
+st.set_page_config(layout="wide")
+col1, col2 = st.columns(2)
+container = st.container()
+
 # Create a graph from the results of a Gremlin query, ir expects the query to return with e and v properties
 def create_graph(cosmos_result: list) -> None:
     # graphviz layout options: neato, dot, twopi, circo, fdp, nop, wc, acyclic, gvpr, gvcolor, ccomps, sccmap, tred, sfdp, unflatten
     # See http://www.graphviz.org/doc/info/attrs.html for a list of attributes.
     config = Config(
-        width=1600,
-        height=1200,
+        width=1920,
+        height=1080,
         directed=True,
         nodeHighlightBehavior=True,
         collapsible=False,
@@ -65,47 +73,60 @@ def create_graph(cosmos_result: list) -> None:
                 label=f"${int(r['e']['properties']['amount']):,}-{r['e']['properties']['type']}",
             )
         )
+    st.metric("Number of Accounts: ", len(nodes))
+    st.metric("Number of Transactions: ", len(edges))
     agraph(nodes=nodes, edges=edges, config=config)
+
 
 # Get adjacent vertices ( 2 levels ) and create a graph
 def get_adj_vertices_and_graph(vertices_list: list) -> None:
     query = f"g.V().has('accountId',within({vertices_list})).optional(both().both()).bothE().as('e').inV().as('v').select('e', 'v')"
-    callback = cql.submitAsync(query)
-    if callback.result() is not None:
-        r = callback.result().all().result()
-        create_graph(r)
-    else:
-        print(f"Something went wrong with this query: {query}\n")
+    try:
+        callback = cql.submitAsync(query)
+        if callback.result() is not None:
+            r = callback.result().all().result()
+            create_graph(r)
+        else:
+            st.write(f"Something went wrong with this query:", query)
+    except Exception as e:
+        st.write(f"Something went wrong with this query:", query)
+        st.error(e)
+
 
 # Execute gremlin query
 def execute_gremlin_query(query: str) -> None:
-    print(f"Executing query: {query}")
-    callback = cql.submitAsync(query)
-    accountId_list = []
-    if callback.result() is not None:
-        results = callback.result().all().result()
-        print(f"\tGot results:\n\t{results}")
-        for r in results:
-            accountId_list.append(r["id"])
-        get_adj_vertices_and_graph(accountId_list)
-    else:
-        print(f"Something went wrong with this query: {query}\n")
+    # print(f"Executing query: {query}")
+    try:
+        callback = cql.submitAsync(f"{query}.limit({GREMLIN_QUERY_LIMIT})")
+        accountId_list = []
+        if callback.result() is not None:
+            results = callback.result().all().result()
+            # print(f"\tGot results:\n\t{results}")
+            for r in results:
+                accountId_list.append(r["id"])
+            get_adj_vertices_and_graph(accountId_list)
+        else:
+            st.write(f"Something went wrong with this query:", query)
+    except Exception as e:
+        st.write(f"Something went wrong with this query:", query)
+        st.error(e)
 
-# Execute Azure search to find accounts either in 
+
+# Execute Azure search to find accounts either in
 def execute_search(search_text: str, filter=None) -> None:
     accountId_list = []
     response = search_client.search(
-        search_text=search_text, include_total_count=True, filter=filter
+        search_text=search_text,
+        include_total_count=True,
+        filter=filter,
+        search_fields=["sink", "vertexId"],
     )
     for r in response:
         accountId_list.append(r["vertexId"])
         accountId_list.append(r["sink"])
-    get_adj_vertices_and_graph(accountId_list)
+    get_adj_vertices_and_graph(list(set(accountId_list)))
 
 
-st.set_page_config(layout="wide")
-col1, col2 = st.columns(2)
-container = st.container()
 with col1:
     st.title("Gremlin Query")
     with st.form(key="search_form"):
