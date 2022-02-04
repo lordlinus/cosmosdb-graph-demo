@@ -55,7 +55,7 @@ def create_graph(cosmos_result: list) -> None:
         },
         link={"labelProperty": "label", "renderLabel": True},
         node_color="#F7A7A6",
-        graphviz_layout="twopi",
+        graphviz_layout="circo",
         graphviz_config={"overlap": "false", "splines": "curved"},
     )
     nodes = []

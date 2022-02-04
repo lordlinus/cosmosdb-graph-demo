@@ -289,7 +289,8 @@ Endpoint: `{{baseUrl}}/indexers?api-version={{apiVersion}}`
 - <https://tinkerpop.apache.org/docs/current/tutorials/getting-started/>
 - <https://tinkerpop.apache.org/docs/current/reference/#a-note-on-lambdas>
 - <https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/cosmos-db/graph/gremlin-limits.md>
-- https://github.com/LuisBosquez/azure-cosmos-db-graph-working-guides/blob/master/graph-backend-json.md
+- <https://github.com/LuisBosquez/azure-cosmos-db-graph-working-guides/blob/master/graph-backend-json.md>
+- <https://syedhassaanahmed.github.io/2018/10/28/writing-apache-spark-graphframes-to-azure-cosmos-db.html>
 
 ## License
 
