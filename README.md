@@ -66,7 +66,7 @@ Cosmos is great for running OLTP queries and if you need to search for data with
       </details>
 
     - run `streamlit run visualize/dashboard.py`
-    - screenshot of [dashboard](images/dashboard.jpg)
+    - screenshot of dashboard ![dashboard](images/dashboard_01.jpg)
 
 ## Azure Search (Optional used for dashboard and enable search queries)
 

@@ -120,13 +120,13 @@ or
 
 **_Graph Traversal 4:_**
 
-Filter accounts that used 'TRANSFER' method to send money to C1355319256. [Image](images/graph_traversal_4.jpg)
+Filter accounts that used 'TRANSFER' method to send money to C1355319256. ![Image](images/graph_traversal_1.jpg)
 
 `g.V().has('accountId','C1355319256').inE('TRANSFER').otherV()`
 
 **_Graph Traversal 5:_**
 
-Filter accounts that used 'CASH_IN' method to send money to C1355319256 and have 'newbalanceDest' greater than or equal to 0. [Image](images/graph_traversal_4.jpg)
+Filter accounts that used 'CASH_IN' method to send money to C1355319256 and have 'newbalanceDest' greater than or equal to 0. ![Image](images/graph_traversal_4.jpg)
 
 `g.V().has('accountId','C1355319256').inE('CASH_IN').has('newbalanceDest', gt(0)).otherV()`
 

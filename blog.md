@@ -2,11 +2,11 @@
 
 ## Problem statement
 
-Bank transactions have traditionally been stored in transactional databases and analysed using SQL queries and to increase scale they are now analysed in distributed systems using Apache Spark. While SQL is great to analyse this data finding relationships between transactions and accounts can be challenging. Graph helps solve **complex** problems by utilizing power of **relationships** between objects, some of these can be modeled as SQL statements gremlin api provide a more concise way to express and search relationships. In this scenario we want to visualize 2 level of customer relationships i.e. if A sends to B and B send to C then we want to identify C when we look at transactions made by A and vice versa.
+Bank transactions have traditionally been stored in transactional databases and analysed using SQL queries and to increase scale they are now analysed in distributed systems using Apache Spark. While SQL is great to analyse this data finding relationships between transactions and accounts can be challenging. In this scenario we want to visualize 2 level of customer relationships i.e. if A sends to B and B send to C then we want to identify C when we look at transactions made by A together with C and vice versa.
 
-## Why does the solution solve the problem
+## Why does this solution solve the problem
 
-In this solution we are using Azure Cosmos Graph DB to store transactions data with customer account id as vertices and transaction as edges and transactional amount as properties of the edges. Running fan out queries on Cosmos is not ideal so Azure search is used to automatically index edge data and perform full scan queries on the index. Azure search will give us the flexibility to search for account either received or sent and we can use the associated accounts to find all other connected accounts using gremlin api. This provides a scalable solution that can scale for any number of transactions.
+Graph helps solve **complex** problems by utilizing power of **relationships** between objects, some of these can be modeled as SQL statements gremlin api provide a more concise way to express and search relationships. In this solution we are using Azure Cosmos Graph DB to store transactions data with customer account id as vertices and transaction as edges and transactional amount as properties of the edges. Running fan out queries on Cosmos is not ideal so Azure search is used to automatically index edge data and perform full scan queries on the index. Azure search will give us the flexibility to search for account either received or sent and we can use the associated accounts to find all other connected accounts using gremlin api. This provides a scalable solution that can scale for any number of transactions.
 
 ## Getting started
 
@@ -62,6 +62,8 @@ In this solution we are using Azure Cosmos Graph DB to store transactions data w
       </details>
 
       3. run `streamlit run visualize/dashboard.py`
+
+      ![Dashboard Sample](images/dashboard_01.jpg)
 
 ## Key highlights:
 

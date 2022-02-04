@@ -60,10 +60,13 @@ def create_graph(cosmos_result: list) -> None:
     )
     nodes = []
     edges = []
-    for r in cosmos_result:
+    accounts = []
+    for r in cosmos_result:            
         if r["e"]["inV"] not in nodes:
+            accounts.append(r["e"]["inV"])
             nodes.append(Node(id=r["e"]["inV"], label=r["e"]["inV"]))
         if r["e"]["outV"] not in nodes:
+            accounts.append(r["e"]["outV"])
             nodes.append(Node(id=r["e"]["outV"], label=r["e"]["outV"]))
         edges.append(
             Edge(
@@ -73,7 +76,7 @@ def create_graph(cosmos_result: list) -> None:
                 label=f"${int(r['e']['properties']['amount']):,}-{r['e']['properties']['type']}",
             )
         )
-    st.metric("Number of Accounts: ", len(nodes))
+    st.metric("Number of unique Accounts: ", len(set(accounts)))
     st.metric("Number of Transactions: ", len(edges))
     agraph(nodes=nodes, edges=edges, config=config)
 
