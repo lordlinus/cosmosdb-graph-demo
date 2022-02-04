@@ -2,15 +2,15 @@
 
 ## Problem statement
 
-Bank transactions have tradionally been stored in transactional databases and analysised using SQL queries and to increase scale they are now analysed in distributed systems using Apache Spark. While SQL is great to analyse this data finding relationships between transactions can be challengin. In this scenario we want to visualise 2 level of customer relationships i.e. if A sends to B and B send to C then we want to identify C when we look at A and vice versa.
+Bank transactions have traditionally been stored in transactional databases and analysed using SQL queries and to increase scale they are now analysed in distributed systems using Apache Spark. While SQL is great to analyse this data finding relationships between transactions and accounts can be challenging. Graph helps solve **complex** problems by utilizing power of **relationships** between objects, some of these can be modeled as SQL statements gremlin api provide a more concise way to express and search relationships. In this scenario we want to visualize 2 level of customer relationships i.e. if A sends to B and B send to C then we want to identify C when we look at transactions made by A and vice versa.
 
 ## Why does the solution solve the problem
 
-In this solution we are using Azure Cosmos DB to store transactions data with customer id as nodes and transaction as edges and transactional amount as properties of the edges. Running fan out queries on Cosmos is not ideal so Azure search is used to automatically index edge data and perform full scan queries on the index. Azure search will give us the flexibility to search for account either receoved or sent and we can use the associated accounts to find all other connected accounts using gremlin api. This provides a scalable soliution that can scale for any number of transactions.
+In this solution we are using Azure Cosmos Graph DB to store transactions data with customer account id as vertices and transaction as edges and transactional amount as properties of the edges. Running fan out queries on Cosmos is not ideal so Azure search is used to automatically index edge data and perform full scan queries on the index. Azure search will give us the flexibility to search for account either received or sent and we can use the associated accounts to find all other connected accounts using gremlin api. This provides a scalable solution that can scale for any number of transactions.
 
 ## Getting started
 
-1. Infrastrcuture:
+1. Infrastructure:
    1. Bicep code is included with this repository and will deploy Cosmos DB, Synapse Spark pool and Azure Search service and follow the below steps
    2. update `param.dev.json` file based on your requirements
    3. change `clientIp` to your workstation ip ( Default value `0.0.0.0`)
@@ -24,8 +24,8 @@ In this solution we are using Azure Cosmos DB to store transactions data with cu
 
 3. Data ingestion using PySpark
 
-   1. Create Synapse spark medium pool in Synpase. [Link](https://docs.microsoft.com/en-us/azure/synapse-analytics/quickstart-create-apache-spark-pool-portal)
-   2. Upload csv file downloaded from previous step into Synapse linked storagae account
+   1. Create Synapse spark medium pool in Synapse. [Link](https://docs.microsoft.com/en-us/azure/synapse-analytics/quickstart-create-apache-spark-pool-portal)
+   2. Upload csv file downloaded from previous step into Synapse linked storage account
    3. create linked service to mount the storage account e.g. `linked-storage-service`
    4. Import notebook ["`insert_transact_data_spark.ipynb`"](load_data/insert_transact_data_spark.ipynb)
    5. Update `linkedService` , `cosmosEndpoint`, `cosmosMasterKey`, `cosmosDatabaseName` and `cosmosContainerName` in notebook
@@ -60,12 +60,15 @@ In this solution we are using Azure Cosmos DB to store transactions data with cu
       ```
 
       </details>
-      
+
       3. run `streamlit run visualize/dashboard.py`
 
 ## Key highlights:
 
-1. 
+1. Synapse spark is used to bulk load data into gremlin using SQL api NOTE: Cosmos gremlin expects to have certain json fields in the edge properties. Since cosmos billing is charged per hour we need to adjust the RU's accordingly to minimize cost, a spark cluster with 4 nodes and cosmos throughput at 20,000 RU/s ( single region) both edges (9 Million ) and vertices (6 Million) records can be ingested in an hour.
+2. All search fan-out queries are done using Azure cognitive search api, Cosmos indexer can be scheduled at regular intervals to update the index
+3. Only accounts that are connected to the transaction are returned from search to narrow down the search results when executing gremlin query and the gremlin query executed is `g.V().has('accountId',within({vertices_list})).optional(both().both()).bothE().as('e').inV().as('v').select('e', 'v')` you can customize this query based on your use-case
 
-Feel free to include key code snippits along the way
-Next steps, where to download, learn more, et
+## Next steps
+
+Clone this repo [cosmosdb-graph-demo](https://github.com/lordlinus/cosmosdb-graph-demo) update configurations and run dashboard app with the data loaded
