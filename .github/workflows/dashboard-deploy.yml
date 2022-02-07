@@ -4,6 +4,8 @@ on: [push]
 
 jobs:
   build:
+    environment:
+      name: dashboard
     runs-on: ubuntu-latest
 
     steps:
@@ -13,7 +15,7 @@ jobs:
       - name: "Login to ACR"
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}
+          login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
