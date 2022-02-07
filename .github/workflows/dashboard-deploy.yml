@@ -42,6 +42,7 @@ jobs:
           name: cosmosgraphdemo
           location: "southeast asia"
           ports: 8501
+          secure-environment-variables: COSMOS_DATABASE=${{ secrets.COSMOS_DATABASE }} COSMOS_GRAPH_COLLECTION=${{ secrets.COSMOS_GRAPH_COLLECTION }} COSMOS_KEY=${{ secrets.COSMOS_KEY }} COSMOS_ENDPOINT=${{ secrets.COSMOS_ENDPOINT }} SEARCH_KEY=${{ secrets.SEARCH_KEY }} SEARCH_INDEX=${{ secrets.SEARCH_INDEX }} SEARCH_ENDPOINT=${{ secrets.SEARCH_ENDPOINT }}
 
       - name: "Azure logout"
         run: |
