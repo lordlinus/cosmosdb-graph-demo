@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: azure/login@v1
+      - name: "Login via Azure CLI"
+        uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -35,9 +36,13 @@ jobs:
           dns-name-label: cosmosgraphdemo
           image: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
           cpu: 1 #Optional
-          memory: 1 #Optional
+          memory: 1.5 #Optional
           registry-username: ${{ secrets.REGISTRY_USERNAME }}
           registry-password: ${{ secrets.REGISTRY_PASSWORD }}
           name: cosmosgraphdemo
           location: "southeast asia"
           ports: 8501
+
+      - name: "Azure logout"
+        run: |
+          az logout
