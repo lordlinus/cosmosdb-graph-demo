@@ -38,7 +38,11 @@ cql = client.Client(
 
 # Initialize streamlit  dashboard
 st.set_page_config(layout="wide")
-col1, col2 = st.columns(2)
+st.markdown("<h1 style='text-align: center; color: black;'>Transaction data Graph Explorer</h1>", unsafe_allow_html=True)
+st.metric(label="Number of unique Accounts", value="6.36 M")
+st.metric(label="Number of Transactions", value="9.07 M")
+
+col4, col5 = st.columns(2)
 # container = st.container()
 # Create a graph from the results of a Gremlin query, ir expects the query to return with e and v properties
 def create_graph(cosmos_result: list) -> None:
@@ -142,21 +146,23 @@ def execute_search(search_text: str, filter=None) -> None:
     get_adj_vertices_and_graph(list(set(accountId_list)))
 
 
-with col1:
-    st.title("Gremlin Query")
+with col4:
+    st.header("Gremlin Query")
     with st.form(key="search_form"):
         query_input = st.text_input(
             label="Enter a Gremlin query in the text box below.",
             help="e.g. g.V().limit(10)",
+            placeholder="g.V().limit(10)",
         )
         submit_button_t = st.form_submit_button(label="Submit")
 
-with col2:
-    st.title("Search Query")
+with col5:
+    st.header("Search Query")
     with st.form(key="gremlin-query"):
         text_input = st.text_input(
             label="Account Number either sent or received",
             help="e.g. C1151008535",
+            placeholder="C1151008535",
             autocomplete="True",
         )
         submit_button_q = st.form_submit_button(label="Submit")
