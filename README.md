@@ -75,6 +75,13 @@ Data source: [Kaggle Fraud Transaction Detection](https://www.kaggle.com/llabhis
     - run `streamlit run visualize/dashboard.py`
     - screenshot of dashboard ![dashboard](images/dashboard_01.jpg)
 
+  - To build container image
+
+    ```bash
+    ACR_NAME=<registry-name>
+    az acr build --registry $ACR_NAME --image cosmosgraphdemo:v1 .
+```
+
 ## Azure Search Cosmos Index and Indexer creation
 
 Refer to [Azure Search Cosmos Index and Indexer](https://docs.microsoft.com/en-us/azure/search/search-howto-index-cosmosdb) for more details on how to create index and indexer for cosmos db graph data.

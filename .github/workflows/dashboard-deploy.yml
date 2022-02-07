@@ -1,0 +1,34 @@
+name: Deploy streamlit webapp
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Check out code"
+        uses: actions/checkout@v2
+
+      - name: "Build container"
+      - uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      - run: |
+          docker build . -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
+          docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
+
+      - name: "Deploy to Azure Container Instances"
+        uses: "azure/aci-deploy@v1"
+        with:
+          resource-group: ${{ secrets.RESOURCE_GROUP }}
+          dns-name-label: cosmosgraphdemo
+          image: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
+          cpu: 1 #Optional
+          memory: 1 #Optional
+          registry-username: ${{ secrets.REGISTRY_USERNAME }}
+          registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+          name: cosmosgraphdemo
+          location: "southeast asia"
