@@ -10,12 +10,14 @@ jobs:
       - name: "Check out code"
         uses: actions/checkout@v2
 
-      - name: "Build container"
+      - name: "Login to ACR"
         uses: azure/docker-login@v1
         with:
           login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: "Build image"
         run: |
           docker build . -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
           docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
