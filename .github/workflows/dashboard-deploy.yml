@@ -9,6 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: "Check out code"
         uses: actions/checkout@v2
 
@@ -36,3 +40,4 @@ jobs:
           registry-password: ${{ secrets.REGISTRY_PASSWORD }}
           name: cosmosgraphdemo
           location: "southeast asia"
+          ports: 8501
