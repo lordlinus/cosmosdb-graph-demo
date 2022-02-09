@@ -25,7 +25,7 @@ param secondaryRegion string
 
 @description('Maximum autoscale throughput for the graph')
 @minValue(400)
-@maxValue(4000)
+@maxValue(20000)
 param maxThroughput int
 
 param partitionKey string
@@ -69,5 +69,13 @@ module spark 'modules/synapse.bicep' = {
     location: location
     clientIp: clientIp
     sqlAdminPassword: sqlAdminPassword
+  }
+}
+
+module registry 'modules/acr.bicep' = {
+  scope: demoResourceGroup
+  name: 'registry'
+  params: {
+    location: location
   }
 }

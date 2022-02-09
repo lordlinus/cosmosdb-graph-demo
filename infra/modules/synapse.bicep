@@ -7,7 +7,6 @@ param clientIp string
 @description('SQL Admin password')
 param sqlAdminPassword string
 
-
 param accountName string = uniqueString(resourceGroup().id)
 
 var accountName_var = toLower(accountName)

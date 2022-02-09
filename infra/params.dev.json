@@ -18,7 +18,7 @@
       "value": "westeurope"
     },
     "maxThroughput": {
-      "value": 20000
+      "value": 4000
     },
     "partitionKey": {
       "value": "accountId"
