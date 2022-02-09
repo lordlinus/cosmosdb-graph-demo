@@ -34,7 +34,7 @@ jobs:
       name: dashboard
     runs-on: ubuntu-latest
     needs: check-visualize-folder
-    if: needs.check-visualize-folder.outputs.run_job == "true"
+    if: needs.check-visualize-folder.outputs.run_job == 'true'
     steps:
       - name: "Login via Azure CLI"
         uses: azure/login@v1
