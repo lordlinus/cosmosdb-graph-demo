@@ -25,11 +25,15 @@ class Transaction:
         # Limit the max number of results returned by a raw gremlin query to avoid excess RU's and timeouts
         self.GREMLIN_QUERY_LIMIT = 100
         self.credential = AzureKeyCredential(search_key)
+
+        # Create cognitive search client
         self.search_client = SearchClient(
             endpoint=search_endpoint,
             index_name=search_index,
             credential=self.credential,
         )
+
+        # Create cosmos client
         self.cql = client.Client(
             f"wss://{cosmos_endpoint}",
             "g",
@@ -37,6 +41,7 @@ class Transaction:
             password=cosmos_key,
             message_serializer=serializer.GraphSONSerializersV2d0(),
         )
+
         # graphviz layout options: neato, dot, twopi, circo, fdp, nop, wc, acyclic, gvpr, gvcolor, ccomps, sccmap, tred, sfdp, unflatten
         # See http://www.graphviz.org/doc/info/attrs.html for a list of attributes.
         self.graph_config = Config(
@@ -54,7 +59,7 @@ class Transaction:
             graphviz_config={"overlap": "false", "splines": "curved"},
         )
 
-    # Create a graph from the results of a Gremlin query, ir expects the query to return with e and v properties
+    # Create a graph from the results of a Gremlin query, expects the query to return with e and v properties
     def create_graph(self, cosmos_result: list) -> None:
         nodes = []
         edges = []
@@ -78,6 +83,7 @@ class Transaction:
         st.metric("Number of Transactions: ", len(edges))
         agraph(nodes=nodes, edges=edges, config=self.graph_config)
 
+    # Get status attributes of the query
     def print_status_attributes(self, result, q) -> None:
         result.status_attributes["query"] = q
         with st.expander(
@@ -126,7 +132,7 @@ class Transaction:
             st.write(f"Something went wrong with this query:", query)
             st.error(e)
 
-    # Execute Azure search to find accounts either in
+    # Execute Azure search to find accounts either sent or received
     def execute_search(self, search_text: str, filter=None) -> None:
         accountId_list = []
         response = self.search_client.search(
