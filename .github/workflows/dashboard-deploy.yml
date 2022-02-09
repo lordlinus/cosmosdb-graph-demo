@@ -1,40 +1,17 @@
 name: Deploy streamlit webapp
 
-on: [push]
+on:
+  push:
+    branches: [main]
+    paths:
+      - visualize/**
+      - requirement.txt
 
 jobs:
-  check-visualize-folder:
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Check out code"
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - name: "Check if visualize folder is updated"
-        run: |
-          echo "=============== list modified files ==============="
-          git diff --name-only HEAD^ HEAD
-
-          echo "========== check paths of modified files =========="
-          git diff --name-only HEAD^ HEAD > files.txt
-          while IFS= read -r file
-          do
-            echo $file
-            if [[ $file = visualize/* ]]; then
-              echo "Files under visualize folder are modified"
-              echo "::set-output name=run_job::true"
-              break
-            else
-              echo "::set-output name=run_job::false"
-            fi
-          done < files.txt
-
   dashboard-deploy:
     environment:
       name: dashboard
     runs-on: ubuntu-latest
-    needs: check-visualize-folder
-    if: needs.check-visualize-folder.outputs.run_job == 'true'
     steps:
       - name: "Login via Azure CLI"
         uses: azure/login@v1
