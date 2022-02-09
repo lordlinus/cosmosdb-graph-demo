@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - visualize/**
-      - requirement.txt
+      - requirements.txt
 
 jobs:
   dashboard-deploy:
