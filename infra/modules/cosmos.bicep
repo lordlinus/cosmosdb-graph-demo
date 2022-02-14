@@ -44,10 +44,10 @@ param graphName string = 'graph01'
 @maxValue(1000000)
 param autoscaleMaxThroughput int = 10000
 
-// @description('Maximum throughput for the graph')
-// @minValue(4000)
-// @maxValue(40000)
-// param maxThroughput int = 4000
+@description('Maximum throughput for the graph')
+@minValue(4000)
+@maxValue(40000)
+param maxThroughput int
 
 param partitionKey string
 
