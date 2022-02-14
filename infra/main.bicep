@@ -23,10 +23,10 @@ param primaryRegion string
 @description('The secondary replica region for the Cosmos DB account.')
 param secondaryRegion string
 
-@description('Maximum autoscale throughput for the graph')
-@minValue(400)
-@maxValue(20000)
-param maxThroughput int
+// @description('Maximum autoscale throughput for the graph')
+// @minValue(400)
+// @maxValue(20000)
+// param maxThroughput int
 
 param partitionKey string
 
@@ -47,9 +47,10 @@ module cosmos 'modules/cosmos.bicep' = {
   scope: demoResourceGroup
   name: 'cosmosdb'
   params: {
+    location: location
     primaryRegion: primaryRegion
     secondaryRegion: secondaryRegion
-    maxThroughput: maxThroughput
+    // maxThroughput: maxThroughput
     partitionKey: partitionKey
   }
 }
