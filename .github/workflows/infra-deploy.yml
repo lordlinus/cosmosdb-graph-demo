@@ -85,7 +85,7 @@ jobs:
           region: ${{ env.AZURE_LOCATION }}
           template: ./infra/main.bicep
           parameters: ./infra/params.dev.json
-          deploymentMode: Validate
+          deploymentMode: Incremental
           failOnStdErr: false
 
       # Log out from Azure
