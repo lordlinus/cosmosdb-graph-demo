@@ -85,11 +85,11 @@ var multiLocation = [
     failoverPriority: 0
     isZoneRedundant: false
   }
-  // {
-  //   locationName: secondaryRegion
-  //   failoverPriority: 1
-  //   isZoneRedundant: false
-  // }
+  {
+    locationName: secondaryRegion
+    failoverPriority: 1
+    isZoneRedundant: false
+  }
 ]
 
 resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2021-07-01-preview' = {
