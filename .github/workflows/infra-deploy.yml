@@ -12,6 +12,8 @@ env:
 
 jobs:
   validation:
+    environment:
+      name: dev
     name: "Validation of IaC templates"
     runs-on: ubuntu-latest
     continue-on-error: false
@@ -54,6 +56,8 @@ jobs:
   deployment:
     name: "Deployment of IaC templates"
     needs: [validation]
+    environment:
+      name: dev
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     continue-on-error: false
