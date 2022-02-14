@@ -64,7 +64,7 @@ resource sparkPool 'Microsoft.Synapse/workspaces/bigDataPools@2021-06-01' = {
 }
 
 resource clientAccess 'Microsoft.Synapse/workspaces/firewallRules@2021-06-01' = {
-  name: 'allow-client-access'
+  name: 'AllowAllWindowsAzureIps'
   parent: synapseWorkspace
   properties: {
     startIpAddress: clientIp

@@ -10,8 +10,8 @@ Graph helps solve **complex** problems by utilizing power of **relationships** b
 
 ## Getting started
 
-
 ### Deploy infrastructure
+
 Bicep code is included with this repository and will deploy Cosmos DB, Synapse Spark pool and Azure Search service and follow the below steps
 
 - update `param.dev.json` file based on your requirements
@@ -20,7 +20,6 @@ Bicep code is included with this repository and will deploy Cosmos DB, Synapse S
 - run below command to create cosmosdb database and collection
   - `az login`
   - `az deployment sub create --location southeastasia --template-file infra/main.bicep --parameters infra/params.dev.json`
-  
 - Below services will be deployed
   - Azure Cosmos DB
   - Azure Search
@@ -44,45 +43,7 @@ Data source: [Kaggle Fraud Transaction Detection](https://www.kaggle.com/llabhis
 - Cosmos DB Gremlin data is stored in json and available using SQL api as well, follow this [reference](https://docs.microsoft.com/en-us/azure/search/search-howto-index-cosmosdb) on how to create index on Cosmos DB Gremlin data
 - Sample [Gremlin Queries](sample_queries.md) you can execute from the Cosmos DB Azure portal
 
-### Visualization
-
-- CosmosDB visualization solutions are available in [Graph Visualization Partners](https://docs.microsoft.com/en-us/azure/cosmos-db/graph/graph-visualization-partners)
-  
-- Sample dashboard app based on [streamlit](https://github.com/streamlit/streamlit) is available [here](visualize/dashboard.py)
-
-  - To run the app
-
-    - Install dependencies from [requirements.txt](./requirements.txt)
-    - create `.env` files with
-
-      - `COSMOS_DATABASE`, `COSMOS_GRAPH_COLLECTION`, `COSMOS_KEY` and `COSMOS_ENDPOINT` from Cosmos DB account
-      - `SEARCH_KEY`, `SEARCH_INDEX` and `SEARCH_ENDPOINT` from Search service
-      <details>
-      <summary>.env file example (replace with values from your services)</summary>
-
-      ```bash
-      COSMOS_DATABASE=database01
-      COSMOS_GRAPH_COLLECTION=graph01
-      COSMOS_KEY=xxxxx
-      COSMOS_ENDPOINT=xxxxx.gremlin.cosmos.azure.com:443/
-      SEARCH_KEY=xxxx
-      SEARCH_INDEX=cosmosdb-index
-      SEARCH_ENDPOINT=https://xxxxx.search.windows.net
-      ```
-
-      </details>
-
-    - run `streamlit run visualize/dashboard.py`
-    - screenshot of dashboard ![dashboard](images/dashboard_01.jpg)
-
-  - To build container image
-
-    ```bash
-    ACR_NAME=<registry-name>
-    az acr build --registry $ACR_NAME --image cosmosgraphdemo:v1 .
-```
-
-## Azure Search Cosmos Index and Indexer creation
+### Azure Search Cosmos Index and Indexer creation using API
 
 Refer to [Azure Search Cosmos Index and Indexer](https://docs.microsoft.com/en-us/azure/search/search-howto-index-cosmosdb) for more details on how to create index and indexer for cosmos db graph data.
 
@@ -302,6 +263,45 @@ Endpoint: `{{baseUrl}}/indexers?api-version={{apiVersion}}`
 
 </details>
 
+
+### Visualization
+
+- CosmosDB visualization solutions are available in [Graph Visualization Partners](https://docs.microsoft.com/en-us/azure/cosmos-db/graph/graph-visualization-partners)
+- Sample dashboard app based on [streamlit](https://github.com/streamlit/streamlit) is available [here](visualize/dashboard.py)
+
+  - To run the app
+
+    - Install dependencies from [requirements.txt](./requirements.txt)
+    - create `.env` files with
+
+      - `COSMOS_DATABASE`, `COSMOS_GRAPH_COLLECTION`, `COSMOS_KEY` and `COSMOS_ENDPOINT` from Cosmos DB account
+      - `SEARCH_KEY`, `SEARCH_INDEX` and `SEARCH_ENDPOINT` from Search service
+      <details>
+      <summary>.env file example (replace with values from your services)</summary>
+
+      ```bash
+      COSMOS_DATABASE=database01
+      COSMOS_GRAPH_COLLECTION=graph01
+      COSMOS_KEY=xxxxx
+      COSMOS_ENDPOINT=xxxxx.gremlin.cosmos.azure.com:443/
+      SEARCH_KEY=xxxx
+      SEARCH_INDEX=cosmosdb-index
+      SEARCH_ENDPOINT=https://xxxxx.search.windows.net
+      ```
+
+      </details>
+
+    - run `streamlit run visualize/dashboard.py`
+    - screenshot of dashboard ![dashboard](images/dashboard_01.jpg)
+
+  - To build container image
+
+    ```bash
+    ACR_NAME=<registry-name>
+    az acr build --registry $ACR_NAME --image cosmosgraphdemo:v1 .
+    ```
+
+
 ## Key highlights:
 
 1. Synapse spark is used to bulk load data into gremlin using SQL api NOTE: Cosmos gremlin expects to have certain json fields in the edge properties. Since cosmos billing is charged per hour we need to adjust the RU's accordingly to minimize cost, a spark cluster with 4 nodes and cosmos throughput at 20,000 RU/s ( single region) both edges (9 Million ) and vertices (6 Million) records can be ingested in an hour.
@@ -311,7 +311,6 @@ Endpoint: `{{baseUrl}}/indexers?api-version={{apiVersion}}`
 ## Next steps
 
 Clone this repo [cosmosdb-graph-demo](https://github.com/lordlinus/cosmosdb-graph-demo) update configurations and run dashboard app with the data loaded
-
 
 ## References
 

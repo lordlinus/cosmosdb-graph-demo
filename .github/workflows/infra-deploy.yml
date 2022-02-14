@@ -1,0 +1,95 @@
+name: Deploy infra
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - infra/**
+
+env:
+  AZURE_SUBSCRIPTION_ID: "7c1d967f-37f1-4047-bef7-05af9aa80fe2"
+  AZURE_LOCATION: "southeastasia"
+
+jobs:
+  validation:
+    name: "Validation of IaC templates"
+    runs-on: ubuntu-latest
+    continue-on-error: false
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Check Out Repository
+        id: checkout_repository
+        uses: actions/checkout@v2
+
+      # Login to Azure
+      - name: Azure Login
+        id: azure_login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Deploy Infra - validation
+      - name: Deploy Infra - validation
+        id: infra_validation
+        uses: azure/arm-deploy@v1
+        with:
+          scope: subscription
+          subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          region: ${{ env.AZURE_LOCATION }}
+          template: ./infra/main.bicep
+          parameters: ./infra/params.dev.json
+          deploymentMode: Validate
+          failOnStdErr: false
+
+      # Log out from Azure
+      - name: Log out from Azure
+        id: azure_logout
+        uses: azure/cli@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az logout
+
+  deployment:
+    name: "Deployment of IaC templates"
+    needs: [validation]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    continue-on-error: false
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Check Out Repository
+        id: checkout_repository
+        uses: actions/checkout@v2
+
+      # Login to Azure
+      - name: Azure Login
+        id: azure_login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          enable-AzPSSession: true
+
+      # Deploy Infra
+      - name: Deploy Infra
+        id: data_management_zone_deployment001
+        uses: azure/arm-deploy@v1
+        with:
+          scope: subscription
+          subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          region: ${{ env.AZURE_LOCATION }}
+          template: ./infra/main.bicep
+          parameters: ./infra/params.dev.json
+          deploymentMode: Validate
+          failOnStdErr: false
+
+      # Log out from Azure
+      - name: Log out from Azure
+        id: azure_logout
+        uses: azure/cli@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az logout

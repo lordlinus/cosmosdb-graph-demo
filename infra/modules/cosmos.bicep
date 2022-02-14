@@ -42,7 +42,7 @@ param graphName string = 'graph01'
 @description('Maximum autoscale throughput for the graph')
 @minValue(4000)
 @maxValue(1000000)
-param autoscaleMaxThroughput int = 20000
+param autoscaleMaxThroughput int = 10000
 
 @description('Maximum throughput for the graph')
 @minValue(4000)
@@ -85,11 +85,11 @@ var multiLocation = [
     failoverPriority: 0
     isZoneRedundant: false
   }
-  {
-    locationName: secondaryRegion
-    failoverPriority: 1
-    isZoneRedundant: false
-  }
+  // {
+  //   locationName: secondaryRegion
+  //   failoverPriority: 1
+  //   isZoneRedundant: false
+  // }
 ]
 
 resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2021-07-01-preview' = {
@@ -102,9 +102,9 @@ resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2021-07-01-
       {
         name: 'EnableGremlin'
       }
-      {
-        name: 'EnableServerless'
-      }
+      // {
+      //   name: 'EnableServerless'
+      // }
     ]
     consistencyPolicy: consistencyPolicy[defaultConsistencyLevel]
     locations: singleLocation
