@@ -6,7 +6,7 @@ Bank transactions have traditionally been stored in transactional databases and 
 
 ## Why does this solution solve the problem
 
-Graph helps solve **complex** problems by utilizing power of **relationships** between objects, some of these can be modeled as SQL statements gremlin api provide a more concise way to express and search relationships. In this solution we are using Azure Cosmos Graph DB to store transactions data with customer account id as vertices and transaction as edges and transactional amount as properties of the edges. Running fan out queries on Cosmos is not ideal so Azure search is used to automatically index edge data and perform full scan queries on the index. Azure search will give us the flexibility to search for account either received or sent and we can use the associated accounts to find all other connected accounts using gremlin api. This provides a scalable solution that can scale for any number of transactions.
+Graph helps solve **complex** problems by utilizing power of **relationships** between objects, some of these can be modeled as SQL statements but gremlin api provide a more concise way to express and search relationships. In this solution we are using Azure Cosmos Graph DB to store transactions data with customer account id as vertices and transaction as edges and transactional amount as properties of the edges.Since running fan out queries on Cosmos DB is not ideal we are leveraging Azure cognitive search to index data in Cosmos DB and leverage search api perform full scan/search queries. Additionally, Azure search will give us the flexibility to search for account either received or sent. This provides a scalable solution that can scale for any number of transactions and keeping the RU requirement  for Cosmos queries low.
 
 ## Getting started
 
@@ -264,10 +264,9 @@ Endpoint: `{{baseUrl}}/indexers?api-version={{apiVersion}}`
 
 CosmosDB visualization solutions are available in [Graph Visualization Partners](https://docs.microsoft.com/en-us/azure/cosmos-db/graph/graph-visualization-partners)
 
--
 - Sample dashboard app based on [streamlit](https://github.com/streamlit/streamlit) is available [here](visualize/dashboard.py)
 
-  - To run the app locally on your machine
+  1. To run the app locally on your machine
 
     - Install dependencies from [requirements.txt](./requirements.txt)
     - create `.env` files with
@@ -292,7 +291,7 @@ CosmosDB visualization solutions are available in [Graph Visualization Partners]
     - run `streamlit run visualize/dashboard.py`
     - screenshot of dashboard ![dashboard](images/dashboard_01.jpg)
 
-  - To run the app on Azure Container Instance and you can use GiHub actions to deploy services. Go to [github_action_dashboard_deployment](github_action_dashboard_deployment.md) to see how to deploy services.
+  2. To run the app on Azure Container Instance and you can use GiHub actions to deploy services. Go to [github_action_dashboard_deployment](github_action_dashboard_deployment.md) to see how to deploy services.
 
     Note: you can build docker container from local machine
 
@@ -305,11 +304,11 @@ CosmosDB visualization solutions are available in [Graph Visualization Partners]
 
 1. Synapse spark is used to bulk load data into gremlin using SQL api NOTE: Cosmos gremlin expects to have certain json fields in the edge properties. Since cosmos billing is charged per hour we need to adjust the RU's accordingly to minimize cost, a spark cluster with 4 nodes and cosmos throughput at 20,000 RU/s ( single region) both edges (9 Million ) and vertices (6 Million) records can be ingested in an hour.
 2. All search fan-out queries are done using Azure cognitive search api, Cosmos indexer can be scheduled at regular intervals to update the index
-3. Only accounts that are connected to the transaction are returned from search to narrow down the search results when executing gremlin query and the gremlin query executed is `g.V().has('accountId',within({vertices_list})).optional(both().both()).bothE().as('e').inV().as('v').select('e', 'v')` you can customize this query based on your use-case
+3. To keep the RU's low, Gremlin query is constructed to include account list e.g. when you search for account `xyz` all account send or received from `xyz` is created as `vertices_list` and gremlin query to get 2 level of transactions is executed as `g.V().has('accountId',within({vertices_list})).optional(both().both()).bothE().as('e').inV().as('v').select('e', 'v')` you can customize this query based on your use-case
 
 ## Next steps
 
-Clone this repo [cosmosdb-graph-demo](https://github.com/lordlinus/cosmosdb-graph-demo) update configurations and run dashboard app with the data loaded
+Clone/Fork this repo [cosmosdb-graph-demo](https://github.com/lordlinus/cosmosdb-graph-demo) update configurations and deploy in your own subscription. GitHub action to deploy [infra](github_action_infra_deploy.md) and [dashboard](github_action_dashboard_deployment.md) are provided for reference.
 
 ## References
 
