@@ -3,8 +3,8 @@ name: Deploy dashboard
 on:
   push:
     branches: [main]
-    paths:
-      - visualize/**
+#     paths:
+#       - visualize/**
 
 env:
   RESOURCE_GROUP: "ssatt-dev-rg"
