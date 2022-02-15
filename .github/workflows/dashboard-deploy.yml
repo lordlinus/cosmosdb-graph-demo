@@ -8,6 +8,7 @@ on:
 
 env:
   RESOURCE_GROUP: "ssatt-dev-rg"
+  COSMOS_ACCOUNT_NAME: "ebcbin5oofjcs"
   COSMOS_DB_NAME: "database01"
   COSMOS_GRAPH_COLLECTION: "graph01"
   SEARCH_SERVICE_NAME: "ebcbin5oofjcs"
@@ -26,9 +27,9 @@ jobs:
       - name: "Get keys"
         id: get_keys
         run: |
-          echo "##[set-output name=COSMOS_KEY;]$(az cosmosdb keys list --name ${{ env.COSMOS_DB_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --query primaryMasterKey --output tsv)"
+          echo "##[set-output name=COSMOS_KEY;]$(az cosmosdb keys list --name ${{ env.COSMOS_ACCOUNT_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --query primaryMasterKey --output tsv)"
 
-          echo "##[set-output name=COSMOS_ENDPOINT;]$(az cosmosdb keys list --type connection-strings --name ${{ env.COSMOS_DB_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --query 'connectionStrings[0].connectionString' | awk -F'[=/]' '{print $4}')"
+          echo "##[set-output name=COSMOS_ENDPOINT;]$(az cosmosdb keys list --type connection-strings --name ${{ env.COSMOS_ACCOUNT_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --query 'connectionStrings[0].connectionString' | awk -F'[=/]' '{print $4}')"
 
           echo "##[set-output name=SEARCH_KEY;]$(az search admin-key show --resource-group ${{ env.RESOURCE_GROUP }} --service-name ${{ env.SEARCH_SERVICE_NAME }} --query primaryKey --output tsv)"
 

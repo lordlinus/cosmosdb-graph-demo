@@ -70,6 +70,7 @@ The following table explains each of the parameters:
 | Parameter          | Description                                                                                                                                         | Sample value                                                          |
 | :----------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
 | **RESOURCE_GROUP** | Specifies the resource group name where cosmos, search are deployed. It is assumed that all the required resources are deplyed in a single resource group for demo                                                     | <div style="width: 36ch">`ssatt-dev-rg`</div> |
+| **COSMOS_ACCOUNT_NAME** | Name of the Cosmos account | `ebcbin5oofjcs`                                                       |
 | **COSMOS_DB_NAME** | Name of the Cosmos Database name | `database01`                                                       |
 | **COSMOS_GRAPH_COLLECTION** | Name of the Cosmos Gremlin name | `graph01`        
 | **SEARCH_SERVICE_NAME** | Name of the Azure Cognitive search | `ebcbin5oofjcs`
