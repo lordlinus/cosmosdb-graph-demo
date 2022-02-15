@@ -1,17 +1,21 @@
-name: Deploy streamlit webapp
+name: Deploy dashboard
 
 on:
   push:
     branches: [main]
     paths:
       - visualize/**
-      - requirements.txt
-      - Dockerfile
+
+env:
+  RESOURCE_GROUP: "ssatt-dev-rg"
+  COSMOS_DB_NAME: "database01"
+  COSMOS_GRAPH_COLLECTION: "graph01"
+  SEARCH_SERVICE_NAME: "ebcbin5oofjcs"
+  AZURE_CONTAINER_REGISTRY: "ebcbin5oofjcs"
+  SEARCH_INDEX: "cosmosdb-index"
 
 jobs:
   dashboard-deploy:
-    environment:
-      name: dashboard
     runs-on: ubuntu-latest
     steps:
       - name: "Login via Azure CLI"
@@ -19,35 +23,50 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: "Get keys"
+        id: get_keys
+        run: |
+          echo "##[set-output name=COSMOS_KEY;]$(az cosmosdb keys list --name ${{ env.COSMOS_DB_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --query primaryMasterKey --output tsv)"
+
+          echo "##[set-output name=COSMOS_ENDPOINT;]$(az cosmosdb keys list --type connection-strings --name ${{ env.COSMOS_DB_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --query 'connectionStrings[0].connectionString' | awk -F'[=/]' '{print $4}')"
+
+          echo "##[set-output name=SEARCH_KEY;]$(az search admin-key show --resource-group ${{ env.RESOURCE_GROUP }} --service-name ${{ env.SEARCH_SERVICE_NAME }} --query primaryKey --output tsv)"
+
+          echo "##[set-output name=SEARCH_ENDPOINT;]$(http://${{ env.SEARCH_SERVICE_NAME }}.search.windows.net)"
+
+          echo "##[set-output name=REGISTRY_USERNAME;]$(az acr credential show --name {{ env.AZURE_CONTAINER_REGISTRY }} --query 'username' --output tsv)"
+
+          echo "##[set-output name=REGISTRY_PASSWORD;]$(az acr credential show --name {{ env.AZURE_CONTAINER_REGISTRY }} --query 'passwords[0].value' --output tsv)"
+
       - name: "Check out code"
         uses: actions/checkout@v2
 
       - name: "Login to ACR"
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}
+          username: ${{  steps.get_keys.outputs.REGISTRY_USERNAME }}
+          password: ${{  steps.get_keys.outputs.REGISTRY_PASSWORD }}
 
       - name: "Build image"
         run: |
-          docker build . -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
-          docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
+          docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
+          docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
 
       - name: "Deploy to Azure Container Instances"
         uses: "azure/aci-deploy@v1"
         with:
-          resource-group: ${{ secrets.RESOURCE_GROUP }}
+          resource-group: ${{ env.RESOURCE_GROUP }}
           dns-name-label: cosmosgraphdemo
-          image: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
+          image: ${{ env.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
           cpu: 1 #Optional
           memory: 1.5 #Optional
-          registry-username: ${{ secrets.REGISTRY_USERNAME }}
-          registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+          registry-username: ${{ steps.get_keys.outputs.REGISTRY_USERNAME }}
+          registry-password: ${{ steps.get_keys.outputs.REGISTRY_PASSWORD }}
           name: cosmosgraphdemo
           location: "southeast asia"
           ports: 8501
-          secure-environment-variables: COSMOS_DATABASE=${{ secrets.COSMOS_DATABASE }} COSMOS_GRAPH_COLLECTION=${{ secrets.COSMOS_GRAPH_COLLECTION }} COSMOS_KEY=${{ secrets.COSMOS_KEY }} COSMOS_ENDPOINT=${{ secrets.COSMOS_ENDPOINT }} SEARCH_KEY=${{ secrets.SEARCH_KEY }} SEARCH_INDEX=${{ secrets.SEARCH_INDEX }} SEARCH_ENDPOINT=${{ secrets.SEARCH_ENDPOINT }}
+          secure-environment-variables: COSMOS_DATABASE=${{ env.COSMOS_DATABASE }} COSMOS_GRAPH_COLLECTION=${{ env.COSMOS_GRAPH_COLLECTION }} COSMOS_KEY=${{ steps.get_keys.outputs.COSMOS_KEY }} COSMOS_ENDPOINT=${{ steps.get_keys.outputs.COSMOS_ENDPOINT }} SEARCH_KEY=${{ steps.get_keys.outputs.SEARCH_KEY }} SEARCH_INDEX=${{ env.SEARCH_INDEX }} SEARCH_ENDPOINT=${{ steps.get_keys.outputs.SEARCH_ENDPOINT }}
 
       - name: "Azure logout"
         run: |

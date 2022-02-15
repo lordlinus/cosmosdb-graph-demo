@@ -23,6 +23,12 @@
     "partitionKey": {
       "value": "accountId"
     },
+    "databaseName": {
+      "value": "database01"
+    },
+    "graphName": {
+      "value": "graph01"
+    },
     "clientIp": {
       "value": "0.0.0.0"
     },

@@ -12,8 +12,6 @@ env:
 
 jobs:
   validation:
-    environment:
-      name: dev
     name: "Validation of IaC templates"
     runs-on: ubuntu-latest
     continue-on-error: false

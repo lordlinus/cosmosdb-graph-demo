@@ -34,10 +34,10 @@ param maxIntervalInSeconds int = 300
 param automaticFailover bool = true
 
 @description('The name for the Gremlin database')
-param databaseName string = 'database01'
+param databaseName string
 
 @description('The name for the Gremlin graph')
-param graphName string = 'graph01'
+param graphName string
 
 @description('Maximum autoscale throughput for the graph')
 @minValue(4000)

@@ -23,6 +23,12 @@ param primaryRegion string
 @description('The secondary replica region for the Cosmos DB account.')
 param secondaryRegion string
 
+@description('Cosmos database name')
+param databaseName string = 'database01'
+
+@description('Gremlin container name')
+param graphName string = 'graph01'
+
 @description('Maximum autoscale throughput for the graph')
 @minValue(400)
 @maxValue(20000)
@@ -52,6 +58,8 @@ module cosmos 'modules/cosmos.bicep' = {
     secondaryRegion: secondaryRegion
     maxThroughput: maxThroughput
     partitionKey: partitionKey
+    databaseName: databaseName
+    graphName: graphName
   }
 }
 

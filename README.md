@@ -12,18 +12,16 @@ Graph helps solve **complex** problems by utilizing power of **relationships** b
 
 ### Deploy infrastructure
 
-Bicep code is included with this repository and will deploy Cosmos DB, Synapse Spark pool and Azure Search service and follow the below steps
+1. Clone this repository to your local machine and navigate to `infra` folder. Bicep code is included with this repository and will deploy Cosmos DB, Synapse Spark pool and Azure Search service and follow the below steps
 
 - update `param.dev.json` file based on your requirements
   - change `clientIp` to your workstation ip ( Default value `0.0.0.0`)
   - change `sqlAdminPassword` to a strong password ( Default value `**ChangeMeNow1234!**`)
-- run below command to create cosmosdb database and collection
+- run below command to create cosmosdb database and collection, Azure Search service and Synapse spark pool
   - `az login`
   - `az deployment sub create --location southeastasia --template-file infra/main.bicep --parameters infra/params.dev.json`
-- Below services will be deployed
-  - Azure Cosmos DB
-  - Azure Search
-  - Synapse Workspace with default storage account and Spark medium pool
+
+2. Use GiHub actions to deploy services. Go to [github_action_infra_deployment](github_action_infra_deployment.md) to see how to deploy services.
 
 ### Load data
 
@@ -31,8 +29,7 @@ Data source: [Kaggle Fraud Transaction Detection](https://www.kaggle.com/llabhis
 
 ### Data ingestion using PySpark
 
-- Create Synapse spark medium pool in Synpase. [Link](https://docs.microsoft.com/en-us/azure/synapse-analytics/quickstart-create-apache-spark-pool-portal)
-- Upload csv file into Synapse linked storagae account
+- Upload csv file into Synapse linked storage account
 - create linked service to mount the storage account e.g. `linked-storage-service`
 - Import notebook ["`insert_transact_data_spark.ipynb`"](load_data/insert_transact_data_spark.ipynb)
 - Update `linkedService` , `cosmosEndpoint`, `cosmosMasterKey`, `cosmosDatabaseName` and `cosmosContainerName` in notebook
@@ -263,13 +260,14 @@ Endpoint: `{{baseUrl}}/indexers?api-version={{apiVersion}}`
 
 </details>
 
-
 ### Visualization
 
-- CosmosDB visualization solutions are available in [Graph Visualization Partners](https://docs.microsoft.com/en-us/azure/cosmos-db/graph/graph-visualization-partners)
+CosmosDB visualization solutions are available in [Graph Visualization Partners](https://docs.microsoft.com/en-us/azure/cosmos-db/graph/graph-visualization-partners)
+
+-
 - Sample dashboard app based on [streamlit](https://github.com/streamlit/streamlit) is available [here](visualize/dashboard.py)
 
-  - To run the app
+  - To run the app locally on your machine
 
     - Install dependencies from [requirements.txt](./requirements.txt)
     - create `.env` files with
@@ -294,13 +292,14 @@ Endpoint: `{{baseUrl}}/indexers?api-version={{apiVersion}}`
     - run `streamlit run visualize/dashboard.py`
     - screenshot of dashboard ![dashboard](images/dashboard_01.jpg)
 
-  - To build container image
+  - To run the app on Azure Container Instance and you can use GiHub actions to deploy services. Go to [github_action_dashboard_deployment](github_action_dashboard_deployment.md) to see how to deploy services.
+
+    Note: you can build docker container from local machine
 
     ```bash
     ACR_NAME=<registry-name>
     az acr build --registry $ACR_NAME --image cosmosgraphdemo:v1 .
     ```
-
 
 ## Key highlights:
 
