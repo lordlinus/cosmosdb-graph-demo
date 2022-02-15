@@ -35,9 +35,9 @@ jobs:
 
           echo "##[set-output name=SEARCH_ENDPOINT;]$(http://${{ env.SEARCH_SERVICE_NAME }}.search.windows.net)"
 
-          echo "##[set-output name=REGISTRY_USERNAME;]$(az acr credential show --name {{ env.AZURE_CONTAINER_REGISTRY }} --query 'username' --output tsv)"
+          echo "##[set-output name=REGISTRY_USERNAME;]$(az acr credential show --name ${{ env.AZURE_CONTAINER_REGISTRY }} --query 'username' --output tsv)"
 
-          echo "##[set-output name=REGISTRY_PASSWORD;]$(az acr credential show --name {{ env.AZURE_CONTAINER_REGISTRY }} --query 'passwords[0].value' --output tsv)"
+          echo "##[set-output name=REGISTRY_PASSWORD;]$(az acr credential show --name ${{ env.AZURE_CONTAINER_REGISTRY }} --query 'passwords[0].value' --output tsv)"
 
       - name: "Check out code"
         uses: actions/checkout@v2
