@@ -68,7 +68,7 @@ jobs:
           name: cosmosgraphdemo
           location: "southeast asia"
           ports: 8501
-          secure-environment-variables: COSMOS_DATABASE=${{ env.COSMOS_DATABASE }} COSMOS_GRAPH_COLLECTION=${{ env.COSMOS_GRAPH_COLLECTION }} COSMOS_KEY=${{ steps.get_keys.outputs.COSMOS_KEY }} COSMOS_ENDPOINT=${{ steps.get_keys.outputs.COSMOS_ENDPOINT }} SEARCH_KEY=${{ steps.get_keys.outputs.SEARCH_KEY }} SEARCH_INDEX=${{ env.SEARCH_INDEX }} SEARCH_ENDPOINT=${{ steps.get_keys.outputs.SEARCH_ENDPOINT }}
+          secure-environment-variables: COSMOS_DATABASE=${{ env.COSMOS_DB_NAME }} COSMOS_GRAPH_COLLECTION=${{ env.COSMOS_GRAPH_COLLECTION }} COSMOS_KEY=${{ steps.get_keys.outputs.COSMOS_KEY }} COSMOS_ENDPOINT=${{ steps.get_keys.outputs.COSMOS_ENDPOINT }} SEARCH_KEY=${{ steps.get_keys.outputs.SEARCH_KEY }} SEARCH_INDEX=${{ env.SEARCH_INDEX }} SEARCH_ENDPOINT=http://${{ env.SEARCH_SERVICE_NAME }}.search.windows.net
 
       - name: "Azure logout"
         run: |
