@@ -6,7 +6,7 @@ Bank transactions have traditionally been stored in transactional databases and 
 
 ## Why does this solution solve the problem
 
-Graph helps solve **complex** problems by utilizing power of **relationships** between objects, some of these can be modeled as SQL statements but gremlin api provide a more concise way to express and search relationships. In this solution we are using Azure Cosmos Graph DB to store transactions data with customer account id as vertices and transaction as edges and transactional amount as properties of the edges.Since running fan out queries on Cosmos DB is not ideal we are leveraging Azure cognitive search to index data in Cosmos DB and leverage search api perform full scan/search queries. Additionally, Azure search will give us the flexibility to search for account either received or sent. This provides a scalable solution that can scale for any number of transactions and keeping the RU requirement  for Cosmos queries low.
+Graph helps solve **complex** problems by utilizing power of **relationships** between objects, some of these can be modeled as SQL statements but gremlin api provide a more concise way to express and search relationships. In this solution we are using Azure Cosmos Graph DB to store transactions data with customer account id as vertices and transaction as edges and transactional amount as properties of the edges.Since running fan out queries on Cosmos DB is not ideal we are leveraging Azure cognitive search to index data in Cosmos DB and leverage search api perform full scan/search queries. Additionally, Azure search will give us the flexibility to search for account either received or sent. This provides a scalable solution that can scale for any number of transactions and keeping the RU requirement for Cosmos queries low.
 
 ## Getting started
 
@@ -14,14 +14,14 @@ Graph helps solve **complex** problems by utilizing power of **relationships** b
 
 1. Clone this repository to your local machine and navigate to `infra` folder. Bicep code is included with this repository and will deploy Cosmos DB, Synapse Spark pool and Azure Search service and follow the below steps
 
-- update `param.dev.json` file based on your requirements
-  - change `clientIp` to your workstation ip ( Default value `0.0.0.0`)
-  - change `sqlAdminPassword` to a strong password ( Default value `**ChangeMeNow1234!**`)
-- run below command to create cosmosdb database and collection, Azure Search service and Synapse spark pool
-  - `az login`
-  - `az deployment sub create --location southeastasia --template-file infra/main.bicep --parameters infra/params.dev.json`
+1. update `param.dev.json` file based on your requirements
+   1. change `clientIp` to your workstation ip ( Default value `0.0.0.0`)
+   2. change `sqlAdminPassword` to a strong password ( Default value `**ChangeMeNow1234!**`)
+2. run below command to create cosmosdb database and collection, Azure Search service and Synapse spark pool
+   1. `az login`
+   2. `az deployment sub create --location southeastasia --template-file infra/main.bicep --parameters infra/params.dev.json`
 
-2. Use GiHub actions to deploy services. Go to [github_action_infra_deployment](github_action_infra_deployment.md) to see how to deploy services.
+3. Use GiHub actions to deploy services. Go to [github_action_infra_deployment](github_action_infra_deployment.md) to see how to deploy services.
 
 ### Load data
 
@@ -268,37 +268,37 @@ CosmosDB visualization solutions are available in [Graph Visualization Partners]
 
   1. To run the app locally on your machine
 
-    - Install dependencies from [requirements.txt](./requirements.txt)
-    - create `.env` files with
+     1. Install dependencies from [requirements.txt](./requirements.txt)
+     2. create `.env` files with
 
-      - `COSMOS_DATABASE`, `COSMOS_GRAPH_COLLECTION`, `COSMOS_KEY` and `COSMOS_ENDPOINT` from Cosmos DB account
-      - `SEARCH_KEY`, `SEARCH_INDEX` and `SEARCH_ENDPOINT` from Search service
-      <details>
-      <summary>.env file example (replace with values from your services)</summary>
+        1. `COSMOS_DATABASE`, `COSMOS_GRAPH_COLLECTION`, `COSMOS_KEY` and `COSMOS_ENDPOINT` from Cosmos DB account
+        2. `SEARCH_KEY`, `SEARCH_INDEX` and `SEARCH_ENDPOINT` from Search service
+           <details>
+           <summary>.env file example (replace with values from your services)</summary>
 
-      ```bash
-      COSMOS_DATABASE=database01
-      COSMOS_GRAPH_COLLECTION=graph01
-      COSMOS_KEY=xxxxx
-      COSMOS_ENDPOINT=xxxxx.gremlin.cosmos.azure.com:443/
-      SEARCH_KEY=xxxx
-      SEARCH_INDEX=cosmosdb-index
-      SEARCH_ENDPOINT=https://xxxxx.search.windows.net
-      ```
+           ```bash
+           COSMOS_DATABASE=database01
+           COSMOS_GRAPH_COLLECTION=graph01
+           COSMOS_KEY=xxxxx
+           COSMOS_ENDPOINT=xxxxx.gremlin.cosmos.azure.com:443/
+           SEARCH_KEY=xxxx
+           SEARCH_INDEX=cosmosdb-index
+           SEARCH_ENDPOINT=https://xxxxx.search.windows.net
+           ```
 
-      </details>
+           </details>
 
-    - run `streamlit run visualize/dashboard.py`
-    - screenshot of dashboard ![dashboard](images/dashboard_01.jpg)
+        3. run `streamlit run visualize/dashboard.py`
+        4. screenshot of dashboard ![dashboard](images/dashboard_01.jpg)
 
   2. To run the app on Azure Container Instance and you can use GiHub actions to deploy services. Go to [github_action_dashboard_deployment](github_action_dashboard_deployment.md) to see how to deploy services.
 
-    Note: you can build docker container from local machine
+  Note: you can build docker container from local machine
 
-    ```bash
-    ACR_NAME=<registry-name>
-    az acr build --registry $ACR_NAME --image cosmosgraphdemo:v1 .
-    ```
+  ```bash
+  ACR_NAME=<registry-name>
+  az acr build --registry $ACR_NAME --image cosmosgraphdemo:v1 .
+  ```
 
 ## Key highlights:
 
