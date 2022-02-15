@@ -12,4 +12,4 @@ WORKDIR /src
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Run streamlit app
-CMD streamlit run visualize/app.py --server.port=8888
+CMD streamlit run visualize/app.py
