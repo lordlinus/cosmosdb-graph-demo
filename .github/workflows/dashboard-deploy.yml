@@ -12,7 +12,7 @@ env:
   COSMOS_DB_NAME: "database01"
   COSMOS_GRAPH_COLLECTION: "graph01"
   SEARCH_SERVICE_NAME: "ebcbin5oofjcs"
-  AZURE_CONTAINER_REGISTRY: "ebcbin5oofjcs"
+  AZURE_CONTAINER_REGISTRY: "ebcbin5oofjcs.azurecr.io"
   SEARCH_INDEX: "cosmosdb-index"
 
 jobs:
@@ -52,8 +52,8 @@ jobs:
       - name: "Build image"
         run: |
           cd $GITHUB_WORKSPACE/visualize
-          docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/cosmosgraphdemo:${{ github.sha }}
-          docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/cosmosgraphdemo:${{ github.sha }}
+          docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
+          docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
 
       - name: "Deploy to Azure Container Instances"
         uses: "azure/aci-deploy@v1"
