@@ -53,7 +53,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/visualize
           docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
-          docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/cosmosgraphdemo:${{ github.sha }}
+          docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/cosmosgraphdemo:${{ github.sha }}
 
       - name: "Deploy to Azure Container Instances"
         uses: "azure/aci-deploy@v1"

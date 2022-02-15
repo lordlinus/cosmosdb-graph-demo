@@ -3,4 +3,4 @@ streamlit-agraph==0.0.37
 azure-search-documents==11.2.1
 gremlinpython==3.5.2
 python-dotenv==0.19.2
-pygraphviz==1.8
+pygraphviz==1.9
