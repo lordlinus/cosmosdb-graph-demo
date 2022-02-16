@@ -12,14 +12,21 @@ Graph helps solve **complex** problems by utilizing power of **relationships** b
 
 ### Deploy infrastructure
 
-1. Clone this repository to your local machine and navigate to `infra` folder. Bicep code is included with this repository and will deploy Cosmos DB, Synapse Spark pool and Azure Search service and follow the below steps
+1. Click on below link to deploy the template.
 
-1. update `param.dev.json` file based on your requirements
-   1. change `clientIp` to your workstation ip ( Default value `0.0.0.0`)
-   2. change `sqlAdminPassword` to a strong password ( Default value `**ChangeMeNow1234!**`)
-2. run below command to create cosmosdb database and collection, Azure Search service and Synapse spark pool
-   1. `az login`
-   2. `az deployment sub create --location southeastasia --template-file infra/main.bicep --parameters infra/params.dev.json`
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Flordlinus%2Fcosmosdb-graph-demo%2Fmain%2Finfra%2Fmain.json)
+
+2. Clone this repository to your local machine and navigate to `infra` folder. Bicep code is included with this repository and will deploy Cosmos DB, Synapse Spark pool and Azure Search service and follow the below steps
+
+   1. update `param.dev.json` file based on your requirements
+   2. change `clientIp` to your workstation ip ( Default value `0.0.0.0`)
+   3. change `sqlAdminPassword` to a strong password ( Default value `**ChangeMeNow1234!**`)
+   4. run below command to create cosmosdb database and collection, Azure Search service and Synapse spark pool
+
+   ```bash
+   az login
+   az deployment sub create --location southeastasia --template-file infra/main.bicep --parameters infra/params.dev.json
+   ```
 
 3. Use GiHub actions to deploy services. Go to [github_action_infra_deployment](github_action_infra_deployment.md) to see how to deploy services.
 
