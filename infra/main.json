@@ -1,0 +1,673 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.4.1272.37030",
+      "templateHash": "18209365327580112483"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "specify location"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "dev",
+      "metadata": {
+        "description": "Specifies the environment of the deployment."
+      },
+      "allowedValues": [
+        "dev",
+        "tst",
+        "prod"
+      ]
+    },
+    "prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the prefix for all resources created in this deployment."
+      },
+      "maxLength": 10,
+      "minLength": 2
+    },
+    "primaryRegion": {
+      "type": "string",
+      "metadata": {
+        "description": "The primary replica region for the Cosmos DB account."
+      }
+    },
+    "secondaryRegion": {
+      "type": "string",
+      "metadata": {
+        "description": "The secondary replica region for the Cosmos DB account."
+      }
+    },
+    "databaseName": {
+      "type": "string",
+      "defaultValue": "database01",
+      "metadata": {
+        "description": "Cosmos database name"
+      }
+    },
+    "graphName": {
+      "type": "string",
+      "defaultValue": "graph01",
+      "metadata": {
+        "description": "Gremlin container name"
+      }
+    },
+    "maxThroughput": {
+      "type": "int",
+      "maxValue": 20000,
+      "minValue": 400,
+      "metadata": {
+        "description": "Maximum autoscale throughput for the graph"
+      }
+    },
+    "partitionKey": {
+      "type": "string"
+    },
+    "clientIp": {
+      "type": "string",
+      "metadata": {
+        "description": "Ip address of the client accessing Synapse resource"
+      }
+    },
+    "sqlAdminPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "SQL Admin password"
+      }
+    }
+  },
+  "variables": {
+    "name": "[toLower(format('{0}-{1}', parameters('prefix'), parameters('environment')))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2021-04-01",
+      "name": "[format('{0}-rg', variables('name'))]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "cosmosdb",
+      "resourceGroup": "[format('{0}-rg', variables('name'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "primaryRegion": {
+            "value": "[parameters('primaryRegion')]"
+          },
+          "secondaryRegion": {
+            "value": "[parameters('secondaryRegion')]"
+          },
+          "maxThroughput": {
+            "value": "[parameters('maxThroughput')]"
+          },
+          "partitionKey": {
+            "value": "[parameters('partitionKey')]"
+          },
+          "databaseName": {
+            "value": "[parameters('databaseName')]"
+          },
+          "graphName": {
+            "value": "[parameters('graphName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "18186068114172194928"
+            }
+          },
+          "parameters": {
+            "accountName": {
+              "type": "string",
+              "defaultValue": "[uniqueString(resourceGroup().id)]",
+              "metadata": {
+                "description": "Cosmos DB account name"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location for the Cosmos DB account."
+              }
+            },
+            "primaryRegion": {
+              "type": "string",
+              "metadata": {
+                "description": "The primary replica region for the Cosmos DB account."
+              }
+            },
+            "secondaryRegion": {
+              "type": "string",
+              "metadata": {
+                "description": "The secondary replica region for the Cosmos DB account."
+              }
+            },
+            "defaultConsistencyLevel": {
+              "type": "string",
+              "defaultValue": "Session",
+              "allowedValues": [
+                "Eventual",
+                "ConsistentPrefix",
+                "Session",
+                "BoundedStaleness",
+                "Strong"
+              ],
+              "metadata": {
+                "description": "The default consistency level of the Cosmos DB account."
+              }
+            },
+            "maxStalenessPrefix": {
+              "type": "int",
+              "defaultValue": 100000,
+              "maxValue": 2147483647,
+              "minValue": 10,
+              "metadata": {
+                "description": "Max stale requests. Required for BoundedStaleness. Valid ranges, Single Region: 10 to 1000000. Multi Region: 100000 to 1000000."
+              }
+            },
+            "maxIntervalInSeconds": {
+              "type": "int",
+              "defaultValue": 300,
+              "maxValue": 86400,
+              "minValue": 5,
+              "metadata": {
+                "description": "Max lag time (seconds). Required for BoundedStaleness. Valid ranges, Single Region: 5 to 84600. Multi Region: 300 to 86400."
+              }
+            },
+            "automaticFailover": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Enable automatic failover for regions"
+              }
+            },
+            "databaseName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name for the Gremlin database"
+              }
+            },
+            "graphName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name for the Gremlin graph"
+              }
+            },
+            "autoscaleMaxThroughput": {
+              "type": "int",
+              "defaultValue": 10000,
+              "maxValue": 1000000,
+              "minValue": 4000,
+              "metadata": {
+                "description": "Maximum autoscale throughput for the graph"
+              }
+            },
+            "maxThroughput": {
+              "type": "int",
+              "maxValue": 40000,
+              "minValue": 4000,
+              "metadata": {
+                "description": "Maximum throughput for the graph"
+              }
+            },
+            "partitionKey": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "accountName_var": "[toLower(parameters('accountName'))]",
+            "consistencyPolicy": {
+              "Eventual": {
+                "defaultConsistencyLevel": "Eventual"
+              },
+              "ConsistentPrefix": {
+                "defaultConsistencyLevel": "ConsistentPrefix"
+              },
+              "Session": {
+                "defaultConsistencyLevel": "Session"
+              },
+              "BoundedStaleness": {
+                "defaultConsistencyLevel": "BoundedStaleness",
+                "maxStalenessPrefix": "[parameters('maxStalenessPrefix')]",
+                "maxIntervalInSeconds": "[parameters('maxIntervalInSeconds')]"
+              },
+              "Strong": {
+                "defaultConsistencyLevel": "Strong"
+              }
+            },
+            "singleLocation": [
+              {
+                "locationName": "[parameters('primaryRegion')]",
+                "failoverPriority": 0,
+                "isZoneRedundant": false
+              }
+            ]
+          },
+          "resources": [
+            {
+              "type": "Microsoft.DocumentDB/databaseAccounts",
+              "apiVersion": "2021-07-01-preview",
+              "name": "[variables('accountName_var')]",
+              "location": "[parameters('location')]",
+              "kind": "GlobalDocumentDB",
+              "properties": {
+                "enableFreeTier": false,
+                "capabilities": [
+                  {
+                    "name": "EnableGremlin"
+                  }
+                ],
+                "consistencyPolicy": "[variables('consistencyPolicy')[parameters('defaultConsistencyLevel')]]",
+                "locations": "[variables('singleLocation')]",
+                "databaseAccountOfferType": "Standard",
+                "enableAutomaticFailover": "[parameters('automaticFailover')]",
+                "createMode": "Default"
+              }
+            },
+            {
+              "type": "Microsoft.DocumentDB/databaseAccounts/gremlinDatabases",
+              "apiVersion": "2021-07-01-preview",
+              "name": "[format('{0}/{1}', variables('accountName_var'), parameters('databaseName'))]",
+              "properties": {
+                "resource": {
+                  "id": "[parameters('databaseName')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('accountName_var'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.DocumentDB/databaseAccounts/gremlinDatabases/graphs",
+              "apiVersion": "2021-07-01-preview",
+              "name": "[format('{0}/{1}', format('{0}/{1}', variables('accountName_var'), parameters('databaseName')), parameters('graphName'))]",
+              "properties": {
+                "resource": {
+                  "id": "[parameters('graphName')]",
+                  "indexingPolicy": {
+                    "indexingMode": "consistent",
+                    "includedPaths": [
+                      {
+                        "path": "/*"
+                      }
+                    ],
+                    "excludedPaths": [
+                      {
+                        "path": "/myPathToNotIndex/*"
+                      }
+                    ]
+                  },
+                  "partitionKey": {
+                    "paths": [
+                      "[format('/{0}', parameters('partitionKey'))]"
+                    ],
+                    "kind": "Hash"
+                  }
+                },
+                "options": {
+                  "autoscaleSettings": {
+                    "maxThroughput": "[parameters('autoscaleMaxThroughput')]"
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/gremlinDatabases', split(format('{0}/{1}', variables('accountName_var'), parameters('databaseName')), '/')[0], split(format('{0}/{1}', variables('accountName_var'), parameters('databaseName')), '/')[1])]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('{0}-rg', variables('name')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "search",
+      "resourceGroup": "[format('{0}-rg', variables('name'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "15996348418253229721"
+            }
+          },
+          "parameters": {
+            "sku": {
+              "type": "string",
+              "defaultValue": "standard",
+              "metadata": {
+                "description": "The pricing tier of the search service you want to create (for example, basic or standard)."
+              },
+              "allowedValues": [
+                "free",
+                "basic",
+                "standard",
+                "standard2",
+                "standard3",
+                "storage_optimized_l1",
+                "storage_optimized_l2"
+              ]
+            },
+            "replicaCount": {
+              "type": "int",
+              "defaultValue": 1,
+              "maxValue": 12,
+              "minValue": 1,
+              "metadata": {
+                "description": "Replicas distribute search workloads across the service. You need at least two replicas to support high availability of query workloads (not applicable to the free tier)."
+              }
+            },
+            "partitionCount": {
+              "type": "int",
+              "defaultValue": 1,
+              "allowedValues": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                12
+              ],
+              "metadata": {
+                "description": "Partitions allow for scaling of document count as well as faster indexing by sharding your index over multiple search units."
+              }
+            },
+            "hostingMode": {
+              "type": "string",
+              "defaultValue": "default",
+              "allowedValues": [
+                "default",
+                "highDensity"
+              ],
+              "metadata": {
+                "description": "Applicable only for SKUs set to standard3. You can set this property to enable a single, high density partition that allows up to 1000 indexes, which is much higher than the maximum indexes allowed for any other SKU."
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location for all resources."
+              }
+            },
+            "accountName": {
+              "type": "string",
+              "defaultValue": "[uniqueString(resourceGroup().id)]",
+              "maxLength": 60,
+              "minLength": 2,
+              "metadata": {
+                "description": "Service name must only contain lowercase letters, digits or dashes, cannot use dash as the first two or last one characters, cannot contain consecutive dashes, and is limited between 2 and 60 characters in length."
+              }
+            }
+          },
+          "variables": {
+            "accountName_var": "[toLower(parameters('accountName'))]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Search/searchServices",
+              "apiVersion": "2021-04-01-preview",
+              "name": "[variables('accountName_var')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "[parameters('sku')]"
+              },
+              "properties": {
+                "replicaCount": "[parameters('replicaCount')]",
+                "partitionCount": "[parameters('partitionCount')]",
+                "hostingMode": "[parameters('hostingMode')]"
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('{0}-rg', variables('name')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "synapse",
+      "resourceGroup": "[format('{0}-rg', variables('name'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "clientIp": {
+            "value": "[parameters('clientIp')]"
+          },
+          "sqlAdminPassword": {
+            "value": "[parameters('sqlAdminPassword')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "11575431366615804402"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location for all resources."
+              }
+            },
+            "clientIp": {
+              "type": "string",
+              "metadata": {
+                "description": "Ip address of the client accessing Synapse resource"
+              }
+            },
+            "sqlAdminPassword": {
+              "type": "string",
+              "metadata": {
+                "description": "SQL Admin password"
+              }
+            },
+            "accountName": {
+              "type": "string",
+              "defaultValue": "[uniqueString(resourceGroup().id)]"
+            }
+          },
+          "variables": {
+            "accountName_var": "[toLower(parameters('accountName'))]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2021-06-01",
+              "name": "[variables('accountName_var')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "kind": "StorageV2",
+              "properties": {
+                "isHnsEnabled": true
+              }
+            },
+            {
+              "type": "Microsoft.Synapse/workspaces",
+              "apiVersion": "2021-06-01",
+              "name": "[variables('accountName_var')]",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "properties": {
+                "defaultDataLakeStorage": {
+                  "accountUrl": "[format('https://{0}.dfs.core.windows.net/', variables('accountName_var'))]",
+                  "filesystem": "default"
+                },
+                "publicNetworkAccess": "Enabled",
+                "sqlAdministratorLogin": "sqladminuser",
+                "sqlAdministratorLoginPassword": "[parameters('sqlAdminPassword')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('accountName_var'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Synapse/workspaces/bigDataPools",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}', variables('accountName_var'), variables('accountName_var'))]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "autoPause": {
+                  "enabled": true,
+                  "delayInMinutes": 15
+                },
+                "autoScale": {
+                  "enabled": true,
+                  "minNodeCount": 1,
+                  "maxNodeCount": 3
+                },
+                "sparkVersion": "3.1",
+                "nodeSize": "Medium",
+                "nodeSizeFamily": "MemoryOptimized",
+                "dynamicExecutorAllocation": {
+                  "enabled": true
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', variables('accountName_var'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Synapse/workspaces/firewallRules",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}', variables('accountName_var'), 'AllowAllWindowsAzureIps')]",
+              "properties": {
+                "startIpAddress": "[parameters('clientIp')]",
+                "endIpAddress": "[parameters('clientIp')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', variables('accountName_var'))]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('{0}-rg', variables('name')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "registry",
+      "resourceGroup": "[format('{0}-rg', variables('name'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "10334076963624566391"
+            }
+          },
+          "parameters": {
+            "registryName": {
+              "type": "string",
+              "defaultValue": "[uniqueString(resourceGroup().id)]",
+              "metadata": {
+                "description": "Container registry name"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location for the container registry."
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ContainerRegistry/registries",
+              "apiVersion": "2021-09-01",
+              "name": "[parameters('registryName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "adminUserEnabled": true
+              }
+            }
+          ],
+          "outputs": {
+            "loginServer": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.ContainerRegistry/registries', parameters('registryName'))).loginServer]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('{0}-rg', variables('name')))]"
+      ]
+    }
+  ]
+}
