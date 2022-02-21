@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - visualize/**
+      - .github/workflows/dashboard-deploy.yml
 
 env:
   RESOURCE_GROUP: "ssatt-dev-rg"

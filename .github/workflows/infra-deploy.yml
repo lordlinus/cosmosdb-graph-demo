@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - infra/**
+      - .github/workflows/infra-deploy.yml
 
 env:
   AZURE_SUBSCRIPTION_ID: "7c1d967f-37f1-4047-bef7-05af9aa80fe2"
