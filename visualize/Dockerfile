@@ -11,5 +11,5 @@ WORKDIR /src
 # Install python dependenciea
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Run streamlit app
+# Run streamlit app on default port
 CMD streamlit run visualize/app.py
