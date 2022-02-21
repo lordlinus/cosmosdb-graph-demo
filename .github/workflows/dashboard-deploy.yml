@@ -14,6 +14,8 @@ env:
   SEARCH_SERVICE_NAME: "ebcbin5oofjcs"
   AZURE_CONTAINER_REGISTRY: "ebcbin5oofjcs.azurecr.io"
   SEARCH_INDEX: "cosmosdb-index"
+  STREAMLIT_SERVER_PORT: 8888
+  STREAMLIT_SERVER_HEADLESS: "true"
 
 jobs:
   dashboard-deploy:
@@ -67,8 +69,8 @@ jobs:
           registry-password: ${{ steps.get_keys.outputs.REGISTRY_PASSWORD }}
           name: cosmosgraphdemo
           location: "southeast asia"
-          ports: 8501
-          secure-environment-variables: COSMOS_DATABASE=${{ env.COSMOS_DB_NAME }} COSMOS_GRAPH_COLLECTION=${{ env.COSMOS_GRAPH_COLLECTION }} COSMOS_KEY=${{ steps.get_keys.outputs.COSMOS_KEY }} COSMOS_ENDPOINT=${{ steps.get_keys.outputs.COSMOS_ENDPOINT }} SEARCH_KEY=${{ steps.get_keys.outputs.SEARCH_KEY }} SEARCH_INDEX=${{ env.SEARCH_INDEX }} SEARCH_ENDPOINT=https://${{ env.SEARCH_SERVICE_NAME }}.search.windows.net
+          ports: ${{ env.STREAMLIT_SERVER_PORT }}
+          secure-environment-variables: COSMOS_DATABASE=${{ env.COSMOS_DB_NAME }} COSMOS_GRAPH_COLLECTION=${{ env.COSMOS_GRAPH_COLLECTION }} COSMOS_KEY=${{ steps.get_keys.outputs.COSMOS_KEY }} COSMOS_ENDPOINT=${{ steps.get_keys.outputs.COSMOS_ENDPOINT }} SEARCH_KEY=${{ steps.get_keys.outputs.SEARCH_KEY }} SEARCH_INDEX=${{ env.SEARCH_INDEX }} SEARCH_ENDPOINT=https://${{ env.SEARCH_SERVICE_NAME }}.search.windows.net STREAMLIT_SERVER_PORT=${{ env.STREAMLIT_SERVER_PORT }} STREAMLIT_SERVER_HEADLESS=${{ env.STREAMLIT_SERVER_HEADLESS }}
 
       - name: "Azure logout"
         run: |
