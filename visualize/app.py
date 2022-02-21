@@ -170,7 +170,7 @@ with col4:
         query_input = st.text_input(
             label="Enter a Gremlin query in the text box below.",
             help="e.g. g.V().limit(10)",
-            placeholder="g.V().limit(10)",
+            value="g.V().limit(10)",
         )
         submit_button_t = st.form_submit_button(label="Submit")
 
@@ -180,7 +180,7 @@ with col5:
         text_input = st.text_input(
             label="Account Number either sent or received",
             help="e.g. C1151008535",
-            placeholder="C1151008535",
+            value="C1151008535",
             autocomplete="True",
         )
         submit_button_q = st.form_submit_button(label="Submit")
