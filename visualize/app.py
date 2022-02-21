@@ -150,7 +150,7 @@ class Transaction:
 # Initialize streamlit  dashboard
 st.set_page_config(layout="wide")
 st.markdown(
-    "<h1 style='text-align: center; color: black;'>Bank Transaction Data - Graph Explorer</h1>",
+    "<h1 style='text-align: center; color: grey;'>Bank Account Transaction Analysis using Cosmos Graph</h1>",
     unsafe_allow_html=True,
 )
 
@@ -187,6 +187,12 @@ with col5:
 
 with st.container():
     if submit_button_t:
-        t.execute_gremlin_query(query_input)
+        if len(query_input) > 0:
+            t.execute_gremlin_query(query_input)
+        else:
+            st.error("Please enter a valid gremlin query")
     elif submit_button_q:
-        t.execute_search(text_input)
+        if len(text_input) > 0:
+            t.execute_search(text_input)
+        else:
+            st.error("Please enter an account number to search")
