@@ -1,4 +1,4 @@
-FROM python:3.10-bullseye
+FROM python:3.10
 
 # Install updates and dependencies
 RUN apt-get update && apt-get upgrade -y && apt-get install -y graphviz graphviz-dev
