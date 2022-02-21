@@ -12,7 +12,8 @@ env:
   COSMOS_ACCOUNT_NAME: "ebcbin5oofjcs"
   COSMOS_DB_NAME: "database01"
   COSMOS_GRAPH_COLLECTION: "graph01"
-  SEARCH_SERVICE_NAME: "ebcbin5oofjcs"
+  SEARCH_RESOURCE_GROUP: "demo-rg-01"
+  SEARCH_SERVICE_NAME: "ssattiraju-search-01"
   AZURE_CONTAINER_REGISTRY: "ebcbin5oofjcs.azurecr.io"
   SEARCH_INDEX: "cosmosdb-index"
   STREAMLIT_SERVER_PORT: 8888
@@ -34,7 +35,7 @@ jobs:
 
           echo "##[set-output name=COSMOS_ENDPOINT;]$(az cosmosdb keys list --type connection-strings --name ${{ env.COSMOS_ACCOUNT_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --query 'connectionStrings[0].connectionString' | awk -F'[=/]' '{print $4}' | sed 's/.documents./.gremlin.cosmos./')"
 
-          echo "##[set-output name=SEARCH_KEY;]$(az search admin-key show --resource-group ${{ env.RESOURCE_GROUP }} --service-name ${{ env.SEARCH_SERVICE_NAME }} --query primaryKey --output tsv)"
+          echo "##[set-output name=SEARCH_KEY;]$(az search admin-key show --resource-group ${{ env.SEARCH_RESOURCE_GROUP }} --service-name ${{ env.SEARCH_SERVICE_NAME }} --query primaryKey --output tsv)"
 
           echo "##[set-output name=SEARCH_ENDPOINT;]$(http://${{ env.SEARCH_SERVICE_NAME }}.search.windows.net)"
 
