@@ -1,11 +1,11 @@
 @description('Container registry name')
-param registryName string = uniqueString(resourceGroup().id)
+param containerRegistryName string
 
 @description('Location for the container registry.')
 param location string = resourceGroup().location
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
-  name: registryName
+  name: containerRegistryName
   location: location
   sku: {
     name: 'Standard'

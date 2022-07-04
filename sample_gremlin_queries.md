@@ -170,3 +170,13 @@ Shortest Path finding operation
 - `select` - allows the graph to be examined from a previous step in a traversal.
 - `simplePath` - stops a traversal from reusing a part of the previous path in the traversal.
 - `cyclicPath` - allows the reuse of part of the previous path.
+
+- Nodes of interest to track:
+- C873309260 and C1335061928
+
+
+
+      "amount": 62432.51,
+      "oldbalanceOrg": 234,
+      "oldbalanceDest": 332547.99,
+      "newbalanceDest": 394980.5,

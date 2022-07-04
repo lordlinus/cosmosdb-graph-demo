@@ -39,12 +39,10 @@ param location string = resourceGroup().location
 @description('Service name must only contain lowercase letters, digits or dashes, cannot use dash as the first two or last one characters, cannot contain consecutive dashes, and is limited between 2 and 60 characters in length.')
 @minLength(2)
 @maxLength(60)
-param accountName string = uniqueString(resourceGroup().id)
-
-var accountName_var = toLower(accountName)
+param searchServiceName string
 
 resource search 'Microsoft.Search/searchServices@2021-04-01-preview' = {
-  name: accountName_var
+  name: searchServiceName
   location: location
   sku: {
     name: sku

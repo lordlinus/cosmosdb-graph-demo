@@ -1,33 +1,35 @@
-targetScope = 'subscription'
+targetScope = 'resourceGroup'
+
+// var config = json(loadTextContent('./params.dev.json'))
 
 // General parameters
 @description('specify location')
 param location string
 
-@allowed([
-  'dev'
-  'tst'
-  'prod'
-])
-@description('Specifies the environment of the deployment.')
-param environment string = 'dev'
+// @allowed([
+//   'dev'
+//   'test'
+//   'prod'
+// ])
+// @description('Specifies the environment of the deployment.')
+// param environment string = 'test'
 
-@minLength(2)
-@maxLength(10)
-@description('Specifies the prefix for all resources created in this deployment.')
-param prefix string
+// @minLength(2)
+// @maxLength(10)
+// @description('Specifies the prefix for all resources created in this deployment.')
+// param prefix string
 
 @description('The primary replica region for the Cosmos DB account.')
 param primaryRegion string
 
-@description('The secondary replica region for the Cosmos DB account.')
-param secondaryRegion string
+// @description('The secondary replica region for the Cosmos DB account.')
+// param secondaryRegion string
 
 @description('Cosmos database name')
-param databaseName string = 'database01'
+param databaseName string
 
 @description('Gremlin container name')
-param graphName string = 'graph01'
+param graphName string
 
 @description('Maximum autoscale throughput for the graph')
 @minValue(400)
@@ -42,21 +44,32 @@ param clientIp string
 @description('SQL Admin password')
 param sqlAdminPassword string
 
-var name = toLower('${prefix}-${environment}')
+@description('Cosmos account name')
+param cosmosAccountName string
 
-resource demoResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
-  name: '${name}-rg'
-  location: location
-}
+@description('Search service name')
+param searchServiceName string
+
+@description('Synapse workspace name')
+param synapseWkspName string
+
+@description('Synapse service storagename')
+param storageAccountName string
+
+@description('Azure Container Registry name')
+param containerRegistryName string
+
+param resourceGroupName string
 
 module cosmos 'modules/cosmos.bicep' = {
-  scope: demoResourceGroup
+  scope: resourceGroup(resourceGroupName)
   name: 'cosmosdb'
   params: {
+    accountName: cosmosAccountName
     location: location
     primaryRegion: primaryRegion
-    secondaryRegion: secondaryRegion
-    maxThroughput: maxThroughput
+    // secondaryRegion: secondaryRegion
+    autoscaleMaxThroughput: maxThroughput
     partitionKey: partitionKey
     databaseName: databaseName
     graphName: graphName
@@ -64,27 +77,31 @@ module cosmos 'modules/cosmos.bicep' = {
 }
 
 module search 'modules/search.bicep' = {
-  scope: demoResourceGroup
+  scope: resourceGroup(resourceGroupName)
   name: 'search'
   params: {
+    searchServiceName: searchServiceName
     location: location
   }
 }
 
 module spark 'modules/synapse.bicep' = {
-  scope: demoResourceGroup
+  scope: resourceGroup(resourceGroupName)
   name: 'synapse'
   params: {
     location: location
+    synapseWkspName: synapseWkspName
+    storageAccountName: storageAccountName
     clientIp: clientIp
     sqlAdminPassword: sqlAdminPassword
   }
 }
 
 module registry 'modules/acr.bicep' = {
-  scope: demoResourceGroup
+  scope: resourceGroup(resourceGroupName)
   name: 'registry'
   params: {
+    containerRegistryName: containerRegistryName
     location: location
   }
 }

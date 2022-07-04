@@ -1,5 +1,5 @@
 @description('Cosmos DB account name')
-param accountName string = uniqueString(resourceGroup().id)
+param accountName string
 
 @description('Location for the Cosmos DB account.')
 param location string = resourceGroup().location
@@ -7,8 +7,8 @@ param location string = resourceGroup().location
 @description('The primary replica region for the Cosmos DB account.')
 param primaryRegion string
 
-@description('The secondary replica region for the Cosmos DB account.')
-param secondaryRegion string
+// @description('The secondary replica region for the Cosmos DB account.')
+// param secondaryRegion string
 
 @description('The default consistency level of the Cosmos DB account.')
 @allowed([
@@ -44,14 +44,9 @@ param graphName string
 @maxValue(1000000)
 param autoscaleMaxThroughput int = 10000
 
-@description('Maximum throughput for the graph')
-@minValue(4000)
-@maxValue(40000)
-param maxThroughput int
-
 param partitionKey string
 
-var accountName_var = toLower(accountName)
+// var accountName_var = toLower(accountName)
 var consistencyPolicy = {
   Eventual: {
     defaultConsistencyLevel: 'Eventual'
@@ -93,7 +88,7 @@ var singleLocation = [
 // ]
 
 resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2021-07-01-preview' = {
-  name: accountName_var
+  name: accountName
   location: location
   kind: 'GlobalDocumentDB'
   properties: {
@@ -115,7 +110,8 @@ resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2021-07-01-
 }
 
 resource accountName_databaseName 'Microsoft.DocumentDB/databaseAccounts/gremlinDatabases@2021-07-01-preview' = {
-  name: '${accountName_resource.name}/${databaseName}'
+  name: databaseName
+  parent: accountName_resource
   properties: {
     resource: {
       id: databaseName
@@ -123,8 +119,9 @@ resource accountName_databaseName 'Microsoft.DocumentDB/databaseAccounts/gremlin
   }
 }
 
-resource accountName_databaseName_graphName 'Microsoft.DocumentDB/databaseAccounts/gremlinDatabases/graphs@2021-07-01-preview' = {
-  name: '${accountName_databaseName.name}/${graphName}'
+resource accountName_databaseName_graphName 'Microsoft.DocumentDB/databaseAccounts/gremlinDatabases/graphs@2022-02-15-preview' = {
+  name: graphName
+  parent: accountName_databaseName
   properties: {
     resource: {
       id: graphName
@@ -150,7 +147,6 @@ resource accountName_databaseName_graphName 'Microsoft.DocumentDB/databaseAccoun
     }
 
     options: {
-      // throughput: maxThroughput
       autoscaleSettings: {
         maxThroughput: autoscaleMaxThroughput
       }

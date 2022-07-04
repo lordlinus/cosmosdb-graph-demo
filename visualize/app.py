@@ -1,5 +1,5 @@
-import os
 import math
+import os
 
 import streamlit as st
 from azure.core.credentials import AzureKeyCredential
@@ -76,7 +76,7 @@ class Transaction:
                     source=r["e"]["outV"],
                     target=r["e"]["inV"],
                     type="CURVE_SMOOTH",
-                    label=f"${int(r['e']['properties']['amount']):,}-{r['e']['properties']['type']}",
+                    label=f"${int(float(r['e']['properties']['amount'])):,}",
                 )
             )
         st.metric("Number of unique Accounts: ", len(set(accounts)))

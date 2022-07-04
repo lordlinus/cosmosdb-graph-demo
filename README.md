@@ -10,31 +10,49 @@ Graph helps solve **complex** problems by utilizing power of **relationships** b
 
 ## Getting started
 
-### Deploy infrastructure
+### Step.1 Deploy infrastructure
 
 Option 1. Click on below link to deploy the template.
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Flordlinus%2Fcosmosdb-graph-demo%2Fmain%2Finfra%2Fmain.json)
 
-Option 2. Clone this repository to your local machine and navigate to `infra` folder. Bicep code is included with this repository and will deploy Cosmos DB, Synapse Spark pool and Azure Search service and follow the below steps
+Option 2.
 
-   1. update `param.dev.json` file based on your requirements
-   2. change `clientIp` to your workstation ip ( Default value `0.0.0.0`)
-   3. change `sqlAdminPassword` to a strong password ( Default value `**ChangeMeNow1234!**`)
-   4. run below command to create cosmosdb database and collection, Azure Search service and Synapse spark pool
-
-   ```bash
-   az login
-   az deployment sub create --location southeastasia --template-file infra/main.bicep --parameters infra/params.dev.json
-   ```
+1.  Open a browser to https://shell.azure.com
+2.  Select the Cloud Shell icon on the Azure portal
+3.  cd into `infra` folder
+4.  Update `settings.sh` file with required values, use `code` command in bash shell to open the file in VS Code
+5.  Run `./infra-deployment.sh` to deploy infrastucture
 
 Option 3. Use GiHub actions to deploy services. Go to [github_action_infra_deployment](github_action_infra_deployment.md) to see how to deploy services.
 
-### Load data
+### Step.2 Post install access setup
+
+#### Add client ip to allow access to Synapse workspacce
+
+Navigate to resource group -> Synapse workspace -> Networking -> Click "Add client IP" and save
+
+#### Add yourself as a user to Synapse workspace
+
+Navigate to Synapse workspace -> manage -> Access control -> Add -> scope "workspace" -> role "Synapse Adminstrator" -> select user "username@contoso.com" -> Apply
+
+#### Add yourself as a user to Synapse Apache Spark administrator
+
+Navigate to Synapse workspace -> manage -> Access control -> Add -> scope "workspace" -> role "Synapse Apache Spark administrator" -> select user "username@contoso.com" -> Apply
+
+#### create data container
+
+Navigate to storage account and create container e.g. "data" and upload [CSV file](load_data/data/PS_20174392719_1491204439457_log.csv) into this container
+
+#### Assign read/write access to storage account
+
+Navigate to Synapse workspace -> select "Data" sec -> select and expand "Linked" storage -> select Primary storage account and container e.g. data > right click on container "data" and click "Manage access" -> Add -> search and select user "username@contoso.com" -> assign read and write -> click Apply
+
+### Step.3 Load data
 
 Data source: [Kaggle Fraud Transaction Detection](https://www.kaggle.com/llabhishekll/fraud-transaction-detection/data). A copy of this data is available in this repo at [PS_20174392719_1491204439457_log.csv](load_data/data/PS_20174392719_1491204439457_log.csv) ( NOTE: you need to use [git-lfs](https://git-lfs.github.com/) to download the csv file locally )
 
-### Data ingestion using PySpark
+### Step.4 Data ingestion using PySpark
 
 - Upload csv file into Synapse linked storage account
 - create linked service to mount the storage account e.g. `linked-storage-service`
@@ -42,12 +60,12 @@ Data source: [Kaggle Fraud Transaction Detection](https://www.kaggle.com/llabhis
 - Update `linkedService` , `cosmosEndpoint`, `cosmosMasterKey`, `cosmosDatabaseName` and `cosmosContainerName` in notebook
 - run notebook and monitor the progress of data load from Cosmos DB insights view ( NOTE: Cosmos billing is per hour so adjust your RU's accordingly to minimize cost)
 
-### Azure search Cosmos index creation
+### Step.5 Azure search Cosmos index creation
 
 - Cosmos DB Gremlin data is stored in json and available using SQL api as well, follow this [reference](https://docs.microsoft.com/en-us/azure/search/search-howto-index-cosmosdb) on how to create index on Cosmos DB Gremlin data
 - Sample [Gremlin Queries](sample_queries.md) you can execute from the Cosmos DB Azure portal
 
-### Azure Search Cosmos Index and Indexer creation using API
+### Step.6 Azure Search Cosmos Index and Indexer creation using API
 
 Refer to [Azure Search Cosmos Index and Indexer](https://docs.microsoft.com/en-us/azure/search/search-howto-index-cosmosdb) for more details on how to create index and indexer for cosmos db graph data.
 
@@ -267,7 +285,7 @@ Endpoint: `{{baseUrl}}/indexers?api-version={{apiVersion}}`
 
 </details>
 
-### Visualization
+### Step.7 Visualization
 
 CosmosDB visualization solutions are available in [Graph Visualization Partners](https://docs.microsoft.com/en-us/azure/cosmos-db/graph/graph-visualization-partners)
 
@@ -324,13 +342,3 @@ Clone/Fork this repo [cosmosdb-graph-demo](https://github.com/lordlinus/cosmosdb
 - <https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/cosmos-db/graph/gremlin-limits.md>
 - <https://github.com/LuisBosquez/azure-cosmos-db-graph-working-guides/blob/master/graph-backend-json.md>
 - <https://syedhassaanahmed.github.io/2018/10/28/writing-apache-spark-graphframes-to-azure-cosmos-db.html>
-
-## License
-
-MIT
-
----
-
-> GitHub [@lordlinus](https://github.com/lordlinus) &nbsp;&middot;&nbsp;
-> Twitter [@lordlinus](https://twitter.com/lordlinus) &nbsp;&middot;&nbsp;
-> Linkedin [Sunil Sattiraju](https://www.linkedin.com/in/sunilsattiraju/)

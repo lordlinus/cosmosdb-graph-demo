@@ -3,19 +3,19 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "location": {
-      "value": "southeastasia"
+      "value": "eastus"
     },
     "environment": {
-      "value": "dev"
+      "value": "test"
     },
     "prefix": {
-      "value": "ssatt"
+      "value": "ssatti"
     },
     "primaryRegion": {
-      "value": "northeurope"
+      "value": "eastus"
     },
     "secondaryRegion": {
-      "value": "westeurope"
+      "value": "westus"
     },
     "maxThroughput": {
       "value": 4000

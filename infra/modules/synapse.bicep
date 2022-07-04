@@ -7,12 +7,13 @@ param clientIp string
 @description('SQL Admin password')
 param sqlAdminPassword string
 
-param accountName string = uniqueString(resourceGroup().id)
+param synapseWkspName string
+param storageAccountName string
 
-var accountName_var = toLower(accountName)
+param corewindowsnet string = environment().suffixes.storage
 
-resource synapseStorage 'Microsoft.Storage/storageAccounts@2021-06-01' = {
-  name: accountName_var
+resource synapseStorage 'Microsoft.Storage/storageAccounts@2021-09-01' = {
+  name: storageAccountName
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -23,15 +24,19 @@ resource synapseStorage 'Microsoft.Storage/storageAccounts@2021-06-01' = {
   }
 }
 
+resource synapseStorageContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-09-01' = {
+  name: '${synapseStorage.name}/default/data'
+}
+
 resource synapseWorkspace 'Microsoft.Synapse/workspaces@2021-06-01' = {
-  name: accountName_var
+  name: synapseWkspName
   location: location
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
     defaultDataLakeStorage: {
-      accountUrl: 'https://${synapseStorage.name}.dfs.core.windows.net/'
+      accountUrl: 'https://${synapseStorage.name}.dfs.${corewindowsnet}/'
       filesystem: 'default'
     }
     publicNetworkAccess: 'Enabled'
@@ -41,7 +46,7 @@ resource synapseWorkspace 'Microsoft.Synapse/workspaces@2021-06-01' = {
 }
 
 resource sparkPool 'Microsoft.Synapse/workspaces/bigDataPools@2021-06-01' = {
-  name: accountName_var
+  name: 'spark01'
   location: location
   parent: synapseWorkspace
   properties: {
