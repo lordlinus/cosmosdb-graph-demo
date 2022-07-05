@@ -110,7 +110,7 @@ There are three deployment options for this demo:
 
 ### Step.5 Sample dashboard app
 
-A sample python webapp is deployed as part of infra deployment. Navigate to the public url from container instances and start exploring the data.
+A sample python webapp is deployed as part of infra deployment. Navigate to the public url from container instances and start exploring the data.screenshot of dashboard ![dashboard](images/dashboard_01.jpg)
 
 ## Limitations
 
