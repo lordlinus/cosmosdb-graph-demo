@@ -1,4 +1,4 @@
-streamlit==1.10.0
+streamlit==1.11.1
 streamlit-agraph==0.0.37
 azure-search-documents==11.2.1
 gremlinpython==3.5.1
