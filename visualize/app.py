@@ -24,7 +24,7 @@ class Transaction:
     def __init__(self) -> None:
         # Limit the max number of results returned by a raw gremlin query to avoid excess RU's and timeouts
         self.GREMLIN_QUERY_LIMIT = 100
-        self.credential = AzureKeyCredential(search_key)
+       # self.credential = AzureKeyCredential(search_key)
 
         # Create cognitive search client
        # self.search_client = SearchClient(
@@ -133,14 +133,14 @@ class Transaction:
             st.error(e)
 
     # Execute Azure search to find accounts either sent or received
-    def execute_search(self, search_text: str, filter=None) -> None:
-        accountId_list = []
-        response = self.search_client.search(
-            search_text=search_text,
-            include_total_count=True,
-            filter=filter,
-            search_fields=["sink", "vertexId"],
-        )
+   # def execute_search(self, search_text: str, filter=None) -> None:
+    #    accountId_list = []
+     #   response = self.search_client.search(
+     #       search_text=search_text,
+      #      include_total_count=True,
+      #      filter=filter,
+       #     search_fields=["sink", "vertexId"],
+       # )
         for r in response:
             accountId_list.append(r["vertexId"])
             accountId_list.append(r["sink"])
