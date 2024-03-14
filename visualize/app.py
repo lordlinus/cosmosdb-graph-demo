@@ -27,11 +27,11 @@ class Transaction:
         self.credential = AzureKeyCredential(search_key)
 
         # Create cognitive search client
-        self.search_client = SearchClient(
-            endpoint=search_endpoint,
-            index_name=search_index,
-            credential=self.credential,
-        )
+       # self.search_client = SearchClient(
+          #  endpoint=search_endpoint,
+           # index_name=search_index,
+           # credential=self.credential,
+       # )
 
         # Create cosmos client
         self.cql = client.Client(
