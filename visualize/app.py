@@ -11,13 +11,13 @@ from streamlit_agraph import Config, Edge, Node, agraph
 # Load environment variables from .env file
 load_dotenv()
 
-cosmos_database = os.getenv("COSMOS_DATABASE")
-cosmos_graph_collection = os.getenv("COSMOS_GRAPH_COLLECTION")
-cosmos_key = os.getenv("COSMOS_KEY")
-cosmos_endpoint = os.getenv("COSMOS_ENDPOINT")
-search_key = os.getenv("SEARCH_KEY")
-search_index = os.getenv("SEARCH_INDEX")
-search_endpoint = os.getenv("SEARCH_ENDPOINT")
+cosmos_database = os.getenv("ontology_nn")
+cosmos_graph_collection = os.getenv("graphnn7")
+cosmos_key = os.getenv("RcyO8fytL4FX7s8Lo9ZejRhvLwXLjN0Kp9GCUHXKTeyBLBuwrAPoAfDDBLPuoEh0jrqBMtBXbCw4ACDblJYPqg==")
+cosmos_endpoint = os.getenv("wss://ontologypoc.gremlin.cosmos.azure.com:443/")
+# search_key = os.getenv("SEARCH_KEY")
+# search_index = os.getenv("SEARCH_INDEX")
+# search_endpoint = os.getenv("SEARCH_ENDPOINT")
 
 
 class Transaction:
