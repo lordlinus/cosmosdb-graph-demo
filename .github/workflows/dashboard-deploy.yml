@@ -8,16 +8,16 @@ on:
       - .github/workflows/dashboard-deploy.yml
 
 env:
-  RESOURCE_GROUP: "ssatt-dev-rg"
-  COSMOS_ACCOUNT_NAME: "ebcbin5oofjcs"
-  COSMOS_DB_NAME: "database01"
-  COSMOS_GRAPH_COLLECTION: "graph01"
-  SEARCH_RESOURCE_GROUP: "demo-rg-01"
-  SEARCH_SERVICE_NAME: "ssattiraju-search-01"
-  AZURE_CONTAINER_REGISTRY: "ebcbin5oofjcs.azurecr.io"
-  SEARCH_INDEX: "cosmosdb-index"
-  STREAMLIT_SERVER_PORT: 8888
-  STREAMLIT_SERVER_HEADLESS: "true"
+  RESOURCE_GROUP: "cosmosdb_ontologypoc_manish"
+  COSMOS_ACCOUNT_NAME: "ontologypoc"
+  COSMOS_DB_NAME: "ontology_nn"
+  COSMOS_GRAPH_COLLECTION: "graphnn7"
+  #SEARCH_RESOURCE_GROUP: "demo-rg-01"
+  #SEARCH_SERVICE_NAME: "ssattiraju-search-01"
+  AZURE_CONTAINER_REGISTRY: "ontologypoc"
+  #SEARCH_INDEX: "cosmosdb-index"
+  #STREAMLIT_SERVER_PORT: 8888
+  #STREAMLIT_SERVER_HEADLESS: "true"
 
 jobs:
   dashboard-deploy:

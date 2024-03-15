@@ -8,8 +8,8 @@ on:
       - .github/workflows/infra-deploy.yml
 
 env:
-  AZURE_SUBSCRIPTION_ID: "7c1d967f-37f1-4047-bef7-05af9aa80fe2"
-  AZURE_LOCATION: "southeastasia"
+  AZURE_SUBSCRIPTION_ID: "c58a65e8-e2c6-4779-948c-29fdccfd9eba"
+  AZURE_LOCATION: "East US 2"
 
 jobs:
   validation:

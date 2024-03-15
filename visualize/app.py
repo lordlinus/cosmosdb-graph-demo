@@ -11,27 +11,27 @@ from streamlit_agraph import Config, Edge, Node, agraph
 # Load environment variables from .env file
 load_dotenv()
 
-cosmos_database = os.getenv("COSMOS_DATABASE")
-cosmos_graph_collection = os.getenv("COSMOS_GRAPH_COLLECTION")
-cosmos_key = os.getenv("COSMOS_KEY")
-cosmos_endpoint = os.getenv("COSMOS_ENDPOINT")
-search_key = os.getenv("SEARCH_KEY")
-search_index = os.getenv("SEARCH_INDEX")
-search_endpoint = os.getenv("SEARCH_ENDPOINT")
+cosmos_database = os.getenv("ontology_nn")
+cosmos_graph_collection = os.getenv("graphnn7")
+cosmos_key = os.getenv("RcyO8fytL4FX7s8Lo9ZejRhvLwXLjN0Kp9GCUHXKTeyBLBuwrAPoAfDDBLPuoEh0jrqBMtBXbCw4ACDblJYPqg==")
+cosmos_endpoint = os.getenv("wss://ontologypoc.gremlin.cosmos.azure.com:443/")
+# search_key = os.getenv("SEARCH_KEY")
+# search_index = os.getenv("SEARCH_INDEX")
+# search_endpoint = os.getenv("SEARCH_ENDPOINT")
 
 
 class Transaction:
     def __init__(self) -> None:
         # Limit the max number of results returned by a raw gremlin query to avoid excess RU's and timeouts
         self.GREMLIN_QUERY_LIMIT = 100
-        self.credential = AzureKeyCredential(search_key)
+       # self.credential = AzureKeyCredential(search_key)
 
         # Create cognitive search client
-        self.search_client = SearchClient(
-            endpoint=search_endpoint,
-            index_name=search_index,
-            credential=self.credential,
-        )
+       # self.search_client = SearchClient(
+          #  endpoint=search_endpoint,
+           # index_name=search_index,
+           # credential=self.credential,
+       # )
 
         # Create cosmos client
         self.cql = client.Client(
@@ -133,14 +133,14 @@ class Transaction:
             st.error(e)
 
     # Execute Azure search to find accounts either sent or received
-    def execute_search(self, search_text: str, filter=None) -> None:
-        accountId_list = []
-        response = self.search_client.search(
-            search_text=search_text,
-            include_total_count=True,
-            filter=filter,
-            search_fields=["sink", "vertexId"],
-        )
+   # def execute_search(self, search_text: str, filter=None) -> None:
+    #    accountId_list = []
+     #   response = self.search_client.search(
+     #       search_text=search_text,
+      #      include_total_count=True,
+      #      filter=filter,
+       #     search_fields=["sink", "vertexId"],
+       # )
         for r in response:
             accountId_list.append(r["vertexId"])
             accountId_list.append(r["sink"])
